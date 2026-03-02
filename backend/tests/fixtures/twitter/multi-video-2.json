@@ -1,0 +1,40 @@
+{
+  "scenario_id": "twitter-multi-video-2",
+  "input_url": "https://x.com/mikuroQ/status/2027735620534358393",
+  "expected_backend_response": {
+    "platform": "twitter",
+    "author": "mikuroQ",
+    "title": "Twitter multi-video tweet",
+    "formats": [
+      {
+        "id": "720",
+        "label": "Video 1 · 720p",
+        "type": "video/mp4",
+        "size_mb": 12.3,
+        "download_url": "/api/download?token=mock_token_multi_video_1"
+      },
+      {
+        "id": "720",
+        "label": "Video 2 · 720p",
+        "type": "video/mp4",
+        "size_mb": 18.7,
+        "download_url": "/api/download?token=mock_token_multi_video_2"
+      }
+    ],
+    "thumbnails": [
+      "https://pbs.twimg.com/ext_tw_video_thumb/multi1.jpg",
+      "https://pbs.twimg.com/ext_tw_video_thumb/multi2.jpg"
+    ],
+    "thumbnail": "https://pbs.twimg.com/ext_tw_video_thumb/multi1.jpg",
+    "duration": 45
+  },
+  "validation_rules": {
+    "must_have_formats": true,
+    "must_have_thumbnails": true,
+    "expected_platform": "twitter",
+    "expected_author": "mikuroQ",
+    "media_type_check": "video",
+    "expected_format_count": 2,
+    "should_zip": true
+  }
+}

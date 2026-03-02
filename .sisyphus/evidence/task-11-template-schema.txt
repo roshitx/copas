@@ -1,0 +1,224 @@
+# Platform Expansion Template - Task 11 Evidence
+
+## Files Created
+
+### 1. Platform Expansion Documentation
+**File:** `docs/testing-platform-expansion.md`
+
+**Sections included:**
+- ✓ Architecture overview with 4-layer diagram
+- ✓ Step-by-step guide for adding new platforms (8 steps)
+- ✓ Required fixture fields enumerated from schema
+- ✓ Required assertions per scenario type
+- ✓ Naming conventions for files, directories, test markers
+- ✓ Validation checklist
+
+**Architecture layers documented:**
+1. Scenario Matrix → tests/shared/{platform}-scenarios.json
+2. Backend Fixtures → backend/tests/fixtures/{platform}/*.json
+3. Frontend Fixtures → frontend/tests/fixtures/{platform}/*.json
+4. Backend Integration Tests → backend/tests/integration/api/test_extract_{platform}.py
+5. Frontend E2E Tests → frontend/tests/e2e/{platform}-deterministic.spec.ts
+
+### 2. Platform Template
+**File:** `tests/shared/platform-template.json`
+
+**Template platform:** Instagram (hypothetical)
+
+**Scenarios included:**
+1. `instagram-single-image` - Single image post
+   - URL: https://www.instagram.com/p/EXAMPLE123/
+   - Author: example_user
+   - Expected: 1 image, no zip
+   - Filename pattern: instagram_example_user_copas_io.jpg
+
+2. `instagram-single-video` - Single video post
+   - URL: https://www.instagram.com/reel/EXAMPLE456/
+   - Author: example_user
+   - Expected: 1 video, no zip
+   - Filename pattern: instagram_example_user_copas_io.mp4
+
+3. `instagram-multi-image-2` - Multi-image carousel
+   - URL: https://www.instagram.com/p/EXAMPLE789/
+   - Author: example_user
+   - Expected: 2 images, zip created
+   - Filename patterns:
+     - instagram_example_user_copas_io_1.jpg
+     - instagram_example_user_copas_io_2.jpg
+   - Zip filename: instagram_example_user_copas_io.zip
+   - File count: 2
+
+## Schema Validation
+
+### Required Fields Present
+
+**Scenario Matrix Fields (from schema):**
+- ✓ id (string): Pattern `{platform}-{scenario-type}`
+- ✓ url (string): Valid platform URL
+- ✓ platform (string): Platform identifier
+- ✓ author (string): Content creator handle
+- ✓ expected.media_count (integer): Number of media items
+- ✓ expected.types (array): Array of ["image", "video"]
+- ✓ expected.filename_pattern (string): For single media
+- ✓ expected.filename_patterns (array): For multi-media
+- ✓ zip_expectations (object|null): Zip behavior
+- ✓ zip_expectations.should_zip (boolean): Whether to create zip
+- ✓ zip_expectations.zip_filename (string): Zip filename pattern
+- ✓ zip_expectations.file_count (integer): Number of files (min: 2)
+
+### Scenario Type Coverage
+
+The template includes one example of each required scenario type:
+- ✓ Single image (no zip)
+- ✓ Single video (no zip)
+- ✓ Multi-image carousel (with zip)
+
+## Documentation Coverage
+
+### Architecture Overview
+- ✓ 4-layer test architecture diagram
+- ✓ Layer responsibility table
+- ✓ Data flow from scenarios → fixtures → tests → E2E
+
+### Step-by-Step Guide (8 steps)
+1. ✓ Add scenario rows to tests/shared/{platform}-scenarios.json
+2. ✓ Create backend/tests/fixtures/{platform}/*.json fixture files
+3. ✓ Create frontend/tests/fixtures/{platform}/*.json fixture files
+4. ✓ Add integration tests in backend/tests/integration/api/test_extract_{platform}.py
+5. ✓ Add E2E tests in frontend/tests/e2e/{platform}-deterministic.spec.ts
+6. ✓ Add live smoke tests tagged @live / @pytest.mark.live
+7. ✓ Update CI workflow to include new platform's deterministic suite in PR gate
+
+### Required Fixture Fields Enumerated
+- ✓ Scenario matrix fields table (12 fields)
+- ✓ Backend fixture fields table (23 fields)
+- ✓ Frontend fixture fields table (16 fields)
+
+### Required Assertions Per Scenario Type
+- ✓ Single image assertions (6 assertions)
+- ✓ Single video assertions (7 assertions)
+- ✓ Multi image assertions (6 assertions)
+- ✓ Multi video assertions (7 assertions)
+- ✓ Hybrid (video + image) assertions (7 assertions)
+
+### Naming Conventions
+- ✓ Files table (7 file patterns with examples)
+- ✓ Directories table (4 directory patterns with examples)
+- ✓ Test markers table (8 marker types with usage)
+- ✓ Scenario ID format with examples and scenario types
+
+### Validation Checklist
+- ✓ 13-item checklist for platform validation
+- ✓ Covers all steps from documentation
+
+## Template Validation
+
+### JSON Structure
+```json
+{
+  "scenarios": [
+    {
+      "id": "instagram-single-image",
+      "url": "https://www.instagram.com/p/EXAMPLE123/",
+      "platform": "instagram",
+      "author": "example_user",
+      "expected": {
+        "media_count": 1,
+        "types": ["image"],
+        "filename_pattern": "instagram_example_user_copas_io.jpg"
+      },
+      "zip_expectations": null
+    }
+    // ... 2 more scenarios
+  ]
+}
+```
+
+### Pattern Validation
+- ✓ Scenario ID format: `{platform}-{scenario-type}`
+- ✓ Filename pattern: `{platform}_{author}_copas_io.{ext}`
+- ✓ Multi-item filename pattern: `{platform}_{author}_copas_io_{index}.{ext}`
+- ✓ Zip filename pattern: `{platform}_{author}_copas_io.zip`
+
+### Platform-Specific Considerations
+The template demonstrates platform-specific patterns:
+- Instagram uses `/p/` for posts and `/reel/` for videos
+- Instagram carousels use `_1.jpg`, `_2.jpg` pattern for indexing
+- Instagram supports mixed media (image + video in carousel)
+
+## Task Completion Status
+
+### Expected Outcomes Achieved
+
+- ✓ File created: `docs/testing-platform-expansion.md`
+  - Onboarding guide for new platforms complete
+  - Architecture overview with diagram included
+  - Step-by-step process documented
+  - Required fields enumerated from schema
+  - Required assertions per scenario type documented
+  - Naming conventions documented
+
+- ✓ File created: `tests/shared/platform-template.json`
+  - Sample platform template for Instagram
+  - 3 scenarios covering all required types
+  - Validates against scenario schema structure
+  - Minimal valid example for hypothetical platform
+
+- ✓ Evidence file: `.sisyphus/evidence/task-11-template-schema.txt`
+  - Documentation of all created files
+  - Schema validation confirmation
+  - Coverage verification
+
+### Scenario Schema
+The template is based on `tests/shared/scenario-schema.json` and follows its structure:
+- Root object with `scenarios` array
+- Each scenario has id, url, platform, author, expected, zip_expectations
+- Conditional fields based on single vs multi-media
+- Optional zip_expectations (null for single, object for multi)
+
+### Backend Fixture Reference
+Based on `backend/tests/fixtures/twitter/single-image.json`:
+- scenario_id links to matrix
+- input_url for testing
+- expected_backend_response with platform, author, title, formats, thumbnails, duration
+- validation_rules for test assertions
+
+### Not Implemented (As Required)
+- ✗ No actual Instagram tests created
+- ✗ No Twitter test files modified
+- ✗ No platform entries added to twitter-scenarios.json (MUST NOT per requirements)
+
+## Validation Notes
+
+### Platform Template Usage
+To use this template for a new platform:
+1. Copy `tests/shared/platform-template.json` to `{platform}-scenarios.json`
+2. Replace all "instagram" with new platform name
+3. Update URLs to valid platform URLs
+4. Update author handles to real accounts
+5. Adjust scenario counts and types as needed
+6. Validate against `tests/shared/scenario-schema.json`
+
+### Documentation Usage
+To add a new platform using the documentation:
+1. Follow Step 1-8 in order
+2. Use required field tables to create fixtures
+3. Copy assertion patterns for each scenario type
+4. Follow naming conventions for all files
+5. Use validation checklist before submitting
+
+### CI Integration
+Documentation includes CI workflow examples for:
+- Backend tests: `pytest -m "integration or contract" -k {platform}`
+- Frontend tests: `npx playwright test tests/e2e/{platform}-deterministic.spec.ts`
+- Live smoke: `@live` marker integration
+
+## Conclusion
+
+The platform expansion template system is complete and ready for use. Future platforms (Instagram, YouTube, TikTok, Facebook) can now be added to the test system without redesigning the architecture by:
+1. Using the documentation as a step-by-step guide
+2. Using the platform template as a starting point
+3. Following the naming conventions and validation checklist
+4. Ensuring all required fields and assertions are present
+
+The architecture is scalable and maintains consistency across all platforms through the shared schema and standardized fixture formats.

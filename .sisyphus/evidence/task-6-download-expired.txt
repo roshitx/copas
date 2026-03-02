@@ -1,0 +1,51 @@
+# Task 6: Download Endpoint Tests - Expired Token Evidence
+
+## Test Execution Summary
+
+**Command:** `cd backend && python3 -m pytest tests/integration/api/test_download_twitter.py tests/contract/test_download_contract.py -m "integration or contract" -v`
+
+**Result:** 25 passed
+
+## Expired/Invalid Token Test Evidence
+
+### Integration Tests (test_download_twitter.py)
+
+| Test Case | Status | Description |
+|-----------|--------|-------------|
+| test_expired_token_returns_410 | PASSED | Expired token returns 410 Gone |
+| test_invalid_token_returns_410 | PASSED | Invalid token returns 410 Gone |
+| test_missing_token_query_param | PASSED | Missing token param returns 422 |
+| test_token_expires_after_ttl | PASSED | Token expires correctly after 5-second TTL |
+
+### Contract Tests (test_download_contract.py)
+
+| Test Case | Status | Description |
+|-----------|--------|-------------|
+| test_expired_token_returns_410_with_error_detail | PASSED | Contract: 410 with error detail schema |
+| test_invalid_token_returns_410_schema | PASSED | Contract: Invalid token returns 410 schema |
+| test_missing_token_returns_422_validation_error | PASSED | Contract: Missing token returns 422 |
+| test_token_ttl_contract | PASSED | Contract: TTL expiration contract verified |
+
+## Key Assertions Verified
+
+### Expired Token (410 Gone)
+- **Status Code:** 410 returned for expired tokens
+- **Error Detail:** Contains "expired", "invalid", or "not found"
+- **Response Format:** JSON with `detail` field
+
+### Invalid Token (410 Gone)
+- **Status Code:** 410 returned for non-existent tokens
+- **Error Detail:** Contains appropriate error message
+- **Behavior:** Consistent with expired token handling
+
+### Missing Token (422 Validation Error)
+- **Status Code:** 422 returned when token param is missing
+- **Response:** FastAPI validation error format
+
+### TTL Behavior
+- **Shortened TTL:** Tests use 5-second TTL for faster verification
+- **Immediate Use:** Token works immediately after creation
+- **Post-Expiration:** Token returns 410 after TTL expires
+
+## Timestamp
+2026-03-01

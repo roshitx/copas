@@ -1,0 +1,47 @@
+{
+  "scenarios": [
+    {
+      "id": "instagram-single-image",
+      "url": "https://www.instagram.com/p/EXAMPLE123/",
+      "platform": "instagram",
+      "author": "example_user",
+      "expected": {
+        "media_count": 1,
+        "types": ["image"],
+        "filename_pattern": "instagram_example_user_copas_io.jpg"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "instagram-single-video",
+      "url": "https://www.instagram.com/reel/EXAMPLE456/",
+      "platform": "instagram",
+      "author": "example_user",
+      "expected": {
+        "media_count": 1,
+        "types": ["video"],
+        "filename_pattern": "instagram_example_user_copas_io.mp4"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "instagram-multi-image-2",
+      "url": "https://www.instagram.com/p/EXAMPLE789/",
+      "platform": "instagram",
+      "author": "example_user",
+      "expected": {
+        "media_count": 2,
+        "types": ["image", "image"],
+        "filename_patterns": [
+          "instagram_example_user_copas_io_1.jpg",
+          "instagram_example_user_copas_io_2.jpg"
+        ]
+      },
+      "zip_expectations": {
+        "should_zip": true,
+        "zip_filename": "instagram_example_user_copas_io.zip",
+        "file_count": 2
+      }
+    }
+  ]
+}

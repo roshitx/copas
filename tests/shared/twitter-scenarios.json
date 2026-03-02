@@ -1,0 +1,85 @@
+{
+  "scenarios": [
+    {
+      "id": "twitter-single-image",
+      "url": "https://x.com/rwhendry/status/2027767749695705372",
+      "platform": "twitter",
+      "author": "rwhendry",
+      "expected": {
+        "media_count": 1,
+        "types": ["image"],
+        "filename_pattern": "twitter_rwhendry_copas_io.jpg"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "twitter-single-video",
+      "url": "https://x.com/sosmedkeras/status/2027955413753417803",
+      "platform": "twitter",
+      "author": "sosmedkeras",
+      "expected": {
+        "media_count": 1,
+        "types": ["video"],
+        "filename_pattern": "twitter_sosmedkeras_copas_io.mp4"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "twitter-multi-video-2",
+      "url": "https://x.com/mikuroQ/status/2027735620534358393",
+      "platform": "twitter",
+      "author": "mikuroQ",
+      "expected": {
+        "media_count": 2,
+        "types": ["video", "video"],
+        "filename_patterns": [
+          "twitter_mikuroQ_copas_io_1.mp4",
+          "twitter_mikuroQ_copas_io_2.mp4"
+        ]
+      },
+      "zip_expectations": {
+        "should_zip": true,
+        "zip_filename": "twitter_mikuroQ_copas_io.zip",
+        "file_count": 2
+      }
+    },
+    {
+      "id": "twitter-multi-image-2",
+      "url": "https://x.com/IndonesiaGaruda/status/2027914018976108959",
+      "platform": "twitter",
+      "author": "IndonesiaGaruda",
+      "expected": {
+        "media_count": 2,
+        "types": ["image", "image"],
+        "filename_patterns": [
+          "twitter_IndonesiaGaruda_copas_io_1.jpg",
+          "twitter_IndonesiaGaruda_copas_io_2.jpg"
+        ]
+      },
+      "zip_expectations": {
+        "should_zip": true,
+        "zip_filename": "twitter_IndonesiaGaruda_copas_io.zip",
+        "file_count": 2
+      }
+    },
+    {
+      "id": "twitter-hybrid-video-image",
+      "url": "https://x.com/Villgecrazylady/status/2027532953966825726",
+      "platform": "twitter",
+      "author": "Villgecrazylady",
+      "expected": {
+        "media_count": 2,
+        "types": ["video", "image"],
+        "filename_patterns": [
+          "twitter_Villgecrazylady_copas_io_1.mp4",
+          "twitter_Villgecrazylady_copas_io_2.jpg"
+        ]
+      },
+      "zip_expectations": {
+        "should_zip": true,
+        "zip_filename": "twitter_Villgecrazylady_copas_io.zip",
+        "file_count": 2
+      }
+    }
+  ]
+}

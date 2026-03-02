@@ -1,0 +1,40 @@
+{
+  "scenario_id": "twitter-multi-image-2",
+  "input_url": "https://x.com/IndonesiaGaruda/status/2027914018976108959",
+  "expected_backend_response": {
+    "platform": "twitter",
+    "author": "IndonesiaGaruda",
+    "title": "Twitter multi-image tweet",
+    "formats": [
+      {
+        "id": "img-1",
+        "label": "Foto 1",
+        "type": "image/jpeg",
+        "size_mb": null,
+        "download_url": "/api/download?token=mock_token_multi_image_1"
+      },
+      {
+        "id": "img-2",
+        "label": "Foto 2",
+        "type": "image/jpeg",
+        "size_mb": null,
+        "download_url": "/api/download?token=mock_token_multi_image_2"
+      }
+    ],
+    "thumbnails": [
+      "https://pbs.twimg.com/media/multi1.jpg",
+      "https://pbs.twimg.com/media/multi2.jpg"
+    ],
+    "thumbnail": "https://pbs.twimg.com/media/multi1.jpg",
+    "duration": null
+  },
+  "validation_rules": {
+    "must_have_formats": true,
+    "must_have_thumbnails": true,
+    "expected_platform": "twitter",
+    "expected_author": "IndonesiaGaruda",
+    "media_type_check": "image",
+    "expected_format_count": 2,
+    "should_zip": true
+  }
+}

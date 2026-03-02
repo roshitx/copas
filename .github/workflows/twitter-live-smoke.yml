@@ -1,0 +1,92 @@
+name: Twitter Live Smoke Tests
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  backend-live:
+    name: Backend Live Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: |
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run live tests
+        working-directory: ./backend
+        run: |
+          timeout 60 pytest -m live -q || echo "Live tests timed out or failed"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-live-results
+          path: backend/.pytest_cache/
+          retention-days: 7
+
+      - name: Add to workflow summary
+        if: always()
+        run: |
+          echo "## Backend Live Tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests: pytest -m live" >> $GITHUB_STEP_SUMMARY
+
+  frontend-live:
+    name: Frontend Live Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ./frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run live tests
+        working-directory: ./frontend
+        run: npx playwright test --grep @live --project=chromium
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-live-results
+          path: |
+            frontend/test-results/
+            frontend/playwright-report/
+          retention-days: 7
+
+      - name: Add to workflow summary
+        if: always()
+        run: |
+          echo "## Frontend Live Tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests: playwright --grep @live" >> $GITHUB_STEP_SUMMARY

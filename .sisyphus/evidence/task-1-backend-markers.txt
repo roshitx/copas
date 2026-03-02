@@ -1,0 +1,16 @@
+# Task 1: Backend Testing Toolchain - Marker Verification
+# Generated: 2026-03-01
+
+## Registered Markers (pytest --markers)
+
+@pytest.mark.unit: Fast unit tests with no external dependencies (fast, isolated)
+
+@pytest.mark.integration: Tests with database/external service mocks (medium speed)
+
+@pytest.mark.contract: API contract validation tests (schema compliance)
+
+@pytest.mark.live: Tests that make real network calls (slow, requires connectivity)
+
+@pytest.mark.smoke: Critical path smoke tests (minimal sanity checks)
+
+## Status: All 5 required markers registered successfully

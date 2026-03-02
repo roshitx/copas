@@ -1,0 +1,177 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Twitter Scenario Validation Schema",
+  "description": "Schema for validating Twitter test scenario matrices and fixtures",
+  "definitions": {
+    "scenarioExpectation": {
+      "type": "object",
+      "properties": {
+        "media_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["image", "video"]
+          },
+          "minItems": 1
+        },
+        "filename_pattern": {
+          "type": "string",
+          "pattern": "^twitter_[a-zA-Z0-9_]+_copas_io(_[0-9]+)?\\.(jpg|mp4)$"
+        },
+        "filename_patterns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^twitter_[a-zA-Z0-9_]+_copas_io(_[0-9]+)?\\.(jpg|mp4)$"
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["media_count", "types"],
+      "oneOf": [
+        {
+          "required": ["filename_pattern"]
+        },
+        {
+          "required": ["filename_patterns"]
+        }
+      ]
+    },
+    "zipExpectations": {
+      "type": "object",
+      "properties": {
+        "should_zip": {
+          "type": "boolean"
+        },
+        "zip_filename": {
+          "type": "string",
+          "pattern": "^twitter_[a-zA-Z0-9_]+_copas_io\\.zip$"
+        },
+        "file_count": {
+          "type": "integer",
+          "minimum": 2
+        }
+      },
+      "required": ["should_zip", "zip_filename", "file_count"]
+    },
+    "scenario": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^twitter-[a-z0-9-]+$"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://(x\\.com|twitter\\.com)/[^/]+/status/[0-9]+$"
+        },
+        "platform": {
+          "type": "string",
+          "enum": ["twitter"]
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "$ref": "#/definitions/scenarioExpectation"
+        },
+        "zip_expectations": {
+          "oneOf": [
+            { "$ref": "#/definitions/zipExpectations" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "required": ["id", "url", "platform", "author", "expected", "zip_expectations"]
+    },
+    "format": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["image/jpeg", "video/mp4", "audio/mp3"]
+        },
+        "size_mb": {
+          "oneOf": [
+            { "type": "number", "minimum": 0 },
+            { "type": "null" }
+          ]
+        },
+        "download_url": {
+          "type": "string",
+          "pattern": "^/api/download\\?token="
+        }
+      },
+      "required": ["id", "label", "type", "download_url"]
+    },
+    "mediaResult": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": ["twitter"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "thumbnail": {
+          "oneOf": [
+            { "type": "string", "format": "uri" },
+            { "type": "null" }
+          ]
+        },
+        "thumbnails": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        },
+        "author": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "null" }
+          ]
+        },
+        "duration": {
+          "oneOf": [
+            { "type": "integer", "minimum": 0 },
+            { "type": "null" }
+          ]
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/format"
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["platform", "title", "thumbnails", "formats"]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/scenario"
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["scenarios"]
+}

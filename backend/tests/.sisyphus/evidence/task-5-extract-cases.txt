@@ -1,0 +1,82 @@
+# Task 5 Evidence: Extract Twitter Integration Tests - Test Cases
+
+## Summary
+All 17 integration tests pass for the `/api/extract` endpoint covering Twitter scenarios.
+
+## Test Execution
+```bash
+cd backend && PYTHONPATH=/Volumes/WORKSPACES/01-PROJECTS/personal/copas.io/backend python3 -m pytest tests/integration/api/test_extract_twitter.py -v
+```
+
+## Results
+```
+============================= test session starts ==============================
+collected 17 items
+
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterSingleImage::test_single_image_returns_correct_structure PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterSingleImage::test_single_image_tokenized_download_url PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterSingleVideo::test_single_video_returns_video_formats PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterSingleVideo::test_single_video_has_thumbnail PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterMultiVideo::test_multi_video_returns_indexed_labels PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterMultiVideo::test_multi_video_has_multiple_thumbnails PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterMultiImage::test_multi_image_returns_multiple_formats PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterMultiImage::test_multi_image_all_have_tokenized_urls PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractTwitterHybrid::test_hybrid_returns_both_video_and_image PASSED
+tests/integration/api/test_extractTwitterHybrid::test_hybrid_has_correct_author_and_thumbnails PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractErrorMapping::test_unsupported_platform_returns_400 PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractErrorMapping::test_private_content_returns_403 PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractErrorMapping::test_extraction_failure_returns_422 PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractErrorMapping::test_internal_error_returns_500 PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractResponseStructure::test_response_has_required_fields PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractResponseStructure::test_format_has_required_fields PASSED
+tests/integration/api/test_extract_twitter.py::TestExtractResponseStructure::test_twitter_platform_detection PASSED
+
+============================== 17 passed in 0.33s ==============================
+```
+
+## Test Coverage
+
+### 5 Twitter Scenarios
+1. **Single Image** (2 tests)
+   - URL: https://x.com/rwhendry/status/2027767749695705372
+   - Tests: Response structure, tokenized download URLs
+   - Assertions: 1 image format, type=image/jpeg, author=rwhendry
+
+2. **Single Video** (2 tests)
+   - URL: https://x.com/sosmedkeras/status/2027955413753417803
+   - Tests: Video formats with quality labels, thumbnails
+   - Assertions: video/mp4 format, quality labels, duration=30, author=sosmedkeras
+
+3. **Multi-Video (2 videos)** (2 tests)
+   - URL: https://x.com/mikuroQ/status/2027735620534358393
+   - Tests: Indexed labels, multiple thumbnails
+   - Assertions: 2 video formats, labels like "Video 1 · 720p", 2 thumbnails
+
+4. **Multi-Image (2 photos)** (2 tests)
+   - URL: https://x.com/IndonesiaGaruda/status/2027914018976108959
+   - Tests: Multiple image formats, tokenized URLs
+   - Assertions: 2 image formats, labels like "Foto 1", author=IndonesiaGaruda
+
+5. **Hybrid (video + image)** (2 tests)
+   - URL: https://x.com/Villgecrazylady/status/2027532953966825726
+   - Tests: Both video and image sections, author/thumbnails
+   - Assertions: 1 video + 1 image format, 2 thumbnails, author=Villgecrazylady
+
+### Error Mapping Tests (4 tests)
+- `ValueError` → 400 UNSUPPORTED_PLATFORM
+- `PermissionError` → 403 ACCESS_DENIED
+- `RuntimeError` → 422 EXTRACTION_FAILED
+- `Exception` → 500 INTERNAL_ERROR
+
+### Response Structure Tests (3 tests)
+- All required MediaResult fields present
+- All required Format fields present
+- Platform detection for both x.com and twitter.com domains
+
+## Files Modified
+- `backend/tests/integration/api/test_extract_twitter.py` (new file)
+- `backend/tests/conftest.py` (added reset_rate_limiter fixture, updated mock_token_store)
+- `backend/app/services/extractor.py` (fixed bugs: duplicate formats.extend, _build_formats signature, thumbnail merging)
+
+## Date
+2026-03-01
