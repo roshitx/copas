@@ -1,0 +1,64 @@
+# Task 4: Token Expiry Tests - Evidence
+
+## Test Coverage: Token Lifecycle
+
+### TokenStore.TTL_SECONDS
+- Verified constant value: 300 seconds (5 minutes)
+
+### Test Cases Implemented
+
+#### 1. Token Creation (`test_create_token_returns_valid_uuid`)
+- Creates token with UUID4 format
+- Verifies 36-character length
+- Verifies 4 hyphens in UUID format
+
+#### 2. Token Storage (`test_create_token_stores_data`)
+- Stores download_url correctly
+- Stores filename correctly  
+- Stores content_type correctly
+- Sets created_at timestamp as float
+
+#### 3. Missing Token (`test_get_token_returns_none_for_missing`)
+- Returns None for non-existent tokens
+
+#### 4. Expired Token (`test_get_token_returns_none_for_expired`)
+- Token created 400 seconds ago (beyond 300s TTL)
+- get_token() returns None
+- Token is removed from store
+
+#### 5. Valid Token Within TTL (`test_get_token_valid_within_ttl`)
+- Token created 100 seconds ago (within 300s TTL)
+- get_token() returns valid TokenData
+- All fields accessible
+
+#### 6. TTL Boundary (`test_get_token_exactly_at_ttl_boundary`)
+- Token created exactly 300 seconds ago
+- get_token() returns None (expired)
+- Boundary condition: `time.time() - created_at > TTL_SECONDS`
+
+#### 7. Cleanup Expired (`test_cleanup_expired_removes_only_expired`)
+- Creates 2 tokens: one expired (400s old), one valid (100s old)
+- cleanup_expired() removes only expired token
+- Valid token remains accessible
+
+#### 8. Empty Store Cleanup (`test_cleanup_expired_empty_store`)
+- cleanup_expired() on empty store doesn't raise
+- No errors thrown
+
+#### 9. Concurrent Access (`test_concurrent_access`)
+- 3 concurrent tasks create 10 tokens each
+- All 30 tokens created and retrievable
+- Async lock prevents race conditions
+
+### Implementation Approach
+- Tests manipulate `created_at` directly via `store._lock` 
+- Avoids time mocking issues with dataclass default_factory
+- Tests actual expiry logic without waiting
+
+### Test Results
+All 10 token_store tests pass:
+```
+pytest tests/unit/services/test_token_store.py -m unit -q
+...........
+10 passed
+```

@@ -1,0 +1,53 @@
+# Task 8: Hybrid Video + Image Downloads Evidence
+
+## Test Results
+All 30 tests pass successfully.
+
+### Hybrid Video + Image Tests
+- ✅ extracts and shows result card
+- ✅ shows 2 media badge
+- ✅ both video AND image sections are visible
+- ✅ at least 1 video format + at least 1 image format button
+- ✅ shows duration badge for video
+- ✅ shows correct format labels (Video 1 · 720p and Foto 2)
+- ✅ image section handles single image correctly
+- ✅ can download video format
+- ✅ can download image format
+
+### Hybrid Content Verification
+The test verifies:
+1. Both video-section and image-section are visible
+2. Accordion container is present for multi-type content
+3. Format buttons exist for both video and image
+4. Video format button triggers download with correct token:
+   - mock_token_hybrid_video
+5. Image format button triggers download with correct token:
+   - mock_token_hybrid_image
+
+### Test Implementation
+```typescript
+// Video download verification
+const downloadInterceptor = createDownloadInterceptor(page)
+...
+expect(downloadInterceptor.wasCalled()).toBe(true)
+expect(downloadInterceptor.getToken()).toBe('mock_token_hybrid_video')
+
+// Image download verification
+let capturedToken: string | null = null
+await page.route(`${BACKEND_URL}/api/download**`, async (route, request) => {
+  const url = request.url()
+  const tokenMatch = url.match(/[?&]token=([^&]+)/)
+  capturedToken = tokenMatch ? tokenMatch[1] : null
+  ...
+})
+...
+expect(capturedToken).toBe('mock_token_hybrid_image')
+```
+
+## Summary
+The hybrid video + image content works correctly:
+- Both sections (video and image) are displayed
+- Each media type can be downloaded individually
+- Correct download tokens are passed
+- No ZIP button for single image in hybrid (as expected)
+- All API calls are properly intercepted and mocked

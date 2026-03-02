@@ -1,0 +1,127 @@
+# Task 5 Evidence: Extract Twitter Integration Tests - Error Mapping
+
+## Error Mapping Test Results
+
+### 1. ValueError → 400 UNSUPPORTED_PLATFORM
+**Test:** `test_unsupported_platform_returns_400`
+```python
+with patch("app.routers.extract.extract_media_info") as mock_extract:
+    mock_extract.side_effect = ValueError("Unsupported platform for URL")
+    response = client.post("/api/extract", json={"url": "https://unsupported.com/video"})
+    assert response.status_code == 400
+```
+**Result:** PASSED ✓
+**Response:**
+```json
+{
+  "detail": {
+    "error": "UNSUPPORTED_PLATFORM",
+    "message": "Unsupported platform for URL"
+  }
+}
+```
+
+### 2. PermissionError → 403 ACCESS_DENIED
+**Test:** `test_private_content_returns_403`
+```python
+with patch("app.routers.extract.extract_media_info") as mock_extract:
+    mock_extract.side_effect = PermissionError("Login required to access content")
+    response = client.post("/api/extract", json={"url": "https://x.com/private/status/123"})
+    assert response.status_code == 403
+```
+**Result:** PASSED ✓
+**Response:**
+```json
+{
+  "detail": {
+    "error": "ACCESS_DENIED",
+    "message": "Login required to access content"
+  }
+}
+```
+
+### 3. RuntimeError → 422 EXTRACTION_FAILED
+**Test:** `test_extraction_failure_returns_422`
+```python
+with patch("app.routers.extract.extract_media_info") as mock_extract:
+    mock_extract.side_effect = RuntimeError("Failed to extract media")
+    response = client.post("/api/extract", json={"url": "https://x.com/user/status/123"})
+    assert response.status_code == 422
+```
+**Result:** PASSED ✓
+**Response:**
+```json
+{
+  "detail": {
+    "error": "EXTRACTION_FAILED",
+    "message": "Failed to extract media"
+  }
+}
+```
+
+### 4. Exception → 500 INTERNAL_ERROR
+**Test:** `test_internal_error_returns_500`
+```python
+with patch("app.routers.extract.extract_media_info") as mock_extract:
+    mock_extract.side_effect = Exception("Unexpected database error")
+    response = client.post("/api/extract", json={"url": "https://x.com/user/status/123"})
+    assert response.status_code == 500
+```
+**Result:** PASSED ✓
+**Response:**
+```json
+{
+  "detail": {
+    "error": "INTERNAL_ERROR",
+    "message": "Terjadi kesalahan internal. Coba lagi nanti."
+  }
+}
+```
+
+## Implementation Details
+
+### Router Error Mapping (extract.py)
+```python
+except ValueError as e:
+    raise HTTPException(status_code=400, detail={
+        "error": "UNSUPPORTED_PLATFORM",
+        "message": str(e),
+    })
+except PermissionError as e:
+    raise HTTPException(status_code=403, detail={
+        "error": "ACCESS_DENIED",
+        "message": str(e),
+    })
+except RuntimeError as e:
+    raise HTTPException(status_code=422, detail={
+        "error": "EXTRACTION_FAILED",
+        "message": str(e),
+    })
+except Exception as e:
+    raise HTTPException(status_code=500, detail={
+        "error": "INTERNAL_ERROR",
+        "message": "Terjadi kesalahan internal. Coba lagi nanti.",
+    })
+```
+
+## Test Infrastructure
+
+### Rate Limiter Reset
+Added autouse fixture to prevent 429 errors during testing:
+```python
+@pytest.fixture(autouse=True)
+def reset_rate_limiter():
+    from app.routers.extract import limiter
+    limiter.reset()
+    yield
+```
+
+### Mock Strategy
+All error mapping tests use `unittest.mock.patch` to mock `app.routers.extract.extract_media_info` at the router level, ensuring exceptions are raised before rate limiting or validation occurs.
+
+## Summary
+All 4 error mapping tests pass, confirming the error code translation:
+- 400: Unsupported platform
+- 403: Access denied (private content, login required)
+- 422: Extraction failed (invalid URL, no media found)
+- 500: Internal server error

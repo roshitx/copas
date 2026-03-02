@@ -1,0 +1,30 @@
+{
+  "scenario_id": "twitter-single-image",
+  "input_url": "https://x.com/rwhendry/status/2027767749695705372",
+  "expected_backend_response": {
+    "platform": "twitter",
+    "author": "rwhendry",
+    "title": "Twitter image tweet",
+    "formats": [
+      {
+        "id": "img-1",
+        "label": "Foto",
+        "type": "image/jpeg",
+        "size_mb": null,
+        "download_url": "/api/download?token=mock_token_single_image"
+      }
+    ],
+    "thumbnails": [
+      "https://pbs.twimg.com/media/example1.jpg"
+    ],
+    "thumbnail": "https://pbs.twimg.com/media/example1.jpg",
+    "duration": null
+  },
+  "validation_rules": {
+    "must_have_formats": true,
+    "must_have_thumbnails": true,
+    "expected_platform": "twitter",
+    "expected_author": "rwhendry",
+    "media_type_check": "image"
+  }
+}

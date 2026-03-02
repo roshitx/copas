@@ -1,0 +1,40 @@
+{
+  "scenario_id": "twitter-hybrid-video-image",
+  "input_url": "https://x.com/Villgecrazylady/status/2027532953966825726",
+  "expected_backend_response": {
+    "platform": "twitter",
+    "author": "Villgecrazylady",
+    "title": "Twitter hybrid tweet (video + image)",
+    "formats": [
+      {
+        "id": "720",
+        "label": "Video 1 · 720p",
+        "type": "video/mp4",
+        "size_mb": 14.2,
+        "download_url": "/api/download?token=mock_token_hybrid_video"
+      },
+      {
+        "id": "img-2",
+        "label": "Foto 2",
+        "type": "image/jpeg",
+        "size_mb": null,
+        "download_url": "/api/download?token=mock_token_hybrid_image"
+      }
+    ],
+    "thumbnails": [
+      "https://pbs.twimg.com/ext_tw_video_thumb/hybrid_video.jpg",
+      "https://pbs.twimg.com/media/hybrid_image.jpg"
+    ],
+    "thumbnail": "https://pbs.twimg.com/ext_tw_video_thumb/hybrid_video.jpg",
+    "duration": 25
+  },
+  "validation_rules": {
+    "must_have_formats": true,
+    "must_have_thumbnails": true,
+    "expected_platform": "twitter",
+    "expected_author": "Villgecrazylady",
+    "media_type_check": "mixed",
+    "expected_format_count": 2,
+    "should_zip": true
+  }
+}

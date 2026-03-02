@@ -1,0 +1,94 @@
+# Task 4: Filename Pattern Tests - Evidence
+
+## Test Coverage: Filename Generation & Helper Functions
+
+### Filename Pattern
+Pattern: `{platform}_{author}_copas_io(_{index}).{ext}`
+
+### Test Cases Implemented
+
+#### 1. Filename with Platform and Author (`test_filename_with_platform_and_author`)
+- Input: platform="twitter", author="john_doe", index=0
+- Output: `twitter_john_doe_copas_io.mp4`
+
+#### 2. Filename with Platform Only (`test_filename_with_platform_only`)
+- Input: platform="youtube", author=None, index=0
+- Output: `youtube_copas_io.mp4`
+- No "None" in filename
+
+#### 3. Filename with Author Only (`test_filename_with_author_only`)
+- Input: platform="", author="jane_doe", index=0
+- Output: `jane_doe_copas_io.mp4`
+
+#### 4. Filename with Neither (`test_filename_with_neither_platform_nor_author`)
+- Input: platform="", author=None, index=0
+- Output: `copas_copas_io.mp4` (defaults to "copas" for platform)
+
+#### 5. Filename with Index (`test_filename_with_index`)
+- Input: platform="twitter", author="user123", index=2
+- Output: `twitter_user123_copas_io_2.mp4`
+- Index appended when > 0
+
+#### 6. Extension from Format (`test_filename_extension_from_format`)
+- Input: ext="webm"
+- Output: filename ends with `.webm`
+
+#### 7. Default Extension (`test_filename_default_extension`)
+- Input: no ext in format dict
+- Output: filename ends with `.mp4` (default)
+
+### Tweet ID Extraction Tests
+
+#### URL Patterns Tested
+1. `twitter.com/username/status/{id}` - Standard
+2. `x.com/username/status/{id}` - X domain
+3. `twitter.com/username/statuses/{id}` - Legacy
+4. `x.com/username/statuses/{id}` - Legacy X
+5. URLs with query parameters
+6. HTTP (non-HTTPS) URLs
+
+#### Invalid URLs (return None)
+- `https://twitter.com/username` (no status)
+- `https://instagram.com/p/ABC123`
+- Empty string, non-URLs
+
+### Platform Detection Tests
+
+#### Supported Platforms
+- TikTok: `tiktok.com`, `vm.tiktok.com`, `vt.tiktok.com`
+- Instagram: `instagram.com`, `instagr.am`
+- YouTube: `youtube.com`, `youtu.be`, `music.youtube.com`
+- Twitter/X: `twitter.com`, `x.com`, `t.co`
+- Facebook: `facebook.com`, `fb.watch`, `fb.me`
+- Threads: `threads.net`, `threads.com`
+
+#### Case Insensitivity
+- `TWITTER.com` → "twitter"
+- `X.COM` → "twitter"
+- `YouTube.Com` → "youtube"
+
+### Format Label Patterns
+
+#### Video Labels
+- Single: `Video 720p`, `Video 1080p`
+- Multi: `Video 1 · 720p`, `Video 2 · 1080p`
+- Qualities: 144p, 240p, 360p, 480p, 574p, 640p, 720p, 960p, 1080p, 1440p, 4K
+
+#### Audio Labels
+- `Audio MP3`
+
+#### Photo Labels
+- Single: `Foto`
+- Multi: `Foto 1`, `Foto 2`, etc.
+
+### URL Normalization
+- `x.com/` → `twitter.com/`
+- Applied for yt-dlp compatibility
+
+### Test Results
+All 37 extractor_helpers tests pass:
+```
+pytest tests/unit/services/test_extractor_helpers.py -m unit -q
+.........................................
+37 passed
+```

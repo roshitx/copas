@@ -1,0 +1,31 @@
+{
+  "scenario_id": "twitter-single-video",
+  "input_url": "https://x.com/sosmedkeras/status/2027955413753417803",
+  "expected_backend_response": {
+    "platform": "twitter",
+    "author": "sosmedkeras",
+    "title": "Twitter video tweet",
+    "formats": [
+      {
+        "id": "720",
+        "label": "Video 720p",
+        "type": "video/mp4",
+        "size_mb": 15.5,
+        "download_url": "/api/download?token=mock_token_single_video"
+      }
+    ],
+    "thumbnails": [
+      "https://pbs.twimg.com/ext_tw_video_thumb/example1.jpg"
+    ],
+    "thumbnail": "https://pbs.twimg.com/ext_tw_video_thumb/example1.jpg",
+    "duration": 30
+  },
+  "validation_rules": {
+    "must_have_formats": true,
+    "must_have_thumbnails": true,
+    "expected_platform": "twitter",
+    "expected_author": "sosmedkeras",
+    "media_type_check": "video",
+    "must_have_duration": true
+  }
+}
