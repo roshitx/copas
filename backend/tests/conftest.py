@@ -27,6 +27,10 @@ def mock_token_store(monkeypatch):
     monkeypatch.setattr(
         "app.services.extractor._token_store_module.token_store", fresh_store
     )
+    # NEW: Add for tiktok_extractor
+    monkeypatch.setattr(
+        "app.services.tiktok_extractor._token_store_module.token_store", fresh_store
+    )
     return fresh_store
 
 
