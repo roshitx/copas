@@ -4,6 +4,7 @@ from slowapi.util import get_remote_address
 
 from app.schemas.extract import ExtractRequest, MediaResult
 from app.services.extractor import extract_media_info
+from app.services.tiktok_extractor import TikWMError, TikWMUnavailableError, TikWMContentError
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
@@ -35,6 +36,17 @@ async def extract_endpoint(request: Request, body: ExtractRequest) -> MediaResul
             "error": "EXTRACTION_FAILED",
             "message": str(e),
         })
+    except TikWMUnavailableError as e:
+        raise HTTPException(status_code=503, detail={
+            "error": "SERVICE_UNAVAILABLE",
+            "message": str(e),
+        })
+    except TikWMContentError as e:
+        raise HTTPException(status_code=422, detail={
+            "error": "EXTRACTION_FAILED",
+            "message": str(e),
+        })
+
     except Exception as e:
         raise HTTPException(status_code=500, detail={
             "error": "INTERNAL_ERROR",

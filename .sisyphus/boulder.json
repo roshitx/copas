@@ -1,9 +1,25 @@
 {
-  "active_plan": "/Volumes/WORKSPACES/01-PROJECTS/personal/copas.io/.sisyphus/plans/instagram-testing-automation.md",
-  "started_at": "2026-03-02T01:58:10.085Z",
+  "active_plan": "/Volumes/WORKSPACES/01-PROJECTS/personal/copas.io/.sisyphus/plans/tiktok-support.md",
+  "started_at": "2026-03-09T03:25:52.693Z",
   "session_ids": [
-    "ses_353d7e8ffffemEWPjBxu126thB"
+    "ses_32fa7abadffeMXs2p7IylJfRXJ",
+    "ses_32f5d498cffefOv75m8hIMi17T",
+    "ses_32f58768dffejxhQeGXK7puB6q",
+    "ses_32f557df0ffebHlijY6X2SDJ08",
+    "ses_32f525e54ffelF3c48U1V0tX02",
+    "ses_32f525e1fffej1qObOcefoANIF"
   ],
-  "plan_name": "instagram-testing-automation",
+  "completed_tasks": [
+    "phase-1",
+    "phase-2",
+    "phase-3",
+    "phase-4",
+    "phase-5",
+    "verify"
+  ],
+    "ses_32fa7abadffeMXs2p7IylJfRXJ"
+  ],
+  "plan_name": "tiktok-support",
+  "worktree_path": "/Volumes/WORKSPACES/01-PROJECTS/personal/copas.io",
   "agent": "atlas"
 }

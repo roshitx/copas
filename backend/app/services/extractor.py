@@ -8,6 +8,7 @@ import yt_dlp
 from app.schemas.extract import MediaResult, Format
 import app.services.token_store as _token_store_module
 from app.utils.platform import detect_platform
+from app.services.tiktok_extractor import extract_tiktok_media
 
 async def extract_media_info(url: str) -> MediaResult:
 
@@ -21,6 +22,11 @@ async def extract_media_info(url: str) -> MediaResult:
             "Platform Threads belum didukung. "
             "Coba download manual dari aplikasi Threads."
         )
+
+    # Route TikTok to TikWM extractor
+    if platform == "tiktok":
+        return await extract_tiktok_media(url)
+
 
     # Normalize x.com -> twitter.com for better yt-dlp compatibility
     normalized_url = url.replace("x.com/", "twitter.com/") if platform == "twitter" else url
