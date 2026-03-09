@@ -1,0 +1,30 @@
+{
+  "scenario_id": "facebook-single-image-public",
+  "input_url": "https://www.facebook.com/photo/?fbid=61500112233448&set=a.61500112233449",
+  "expected_backend_response": {
+    "platform": "facebook",
+    "author": "imagecreator",
+    "title": "Facebook public single image",
+    "formats": [
+      {
+        "id": "img-1",
+        "label": "Foto",
+        "type": "image/jpeg",
+        "size_mb": null,
+        "download_url": "/api/download?token=mock_token_facebook_single_image"
+      }
+    ],
+    "thumbnails": [
+      "https://scontent.xx.fbcdn.net/photo-thumb-1.jpg"
+    ],
+    "thumbnail": "https://scontent.xx.fbcdn.net/photo-thumb-1.jpg",
+    "duration": null
+  },
+  "validation_rules": {
+    "must_have_formats": true,
+    "must_have_thumbnails": true,
+    "expected_platform": "facebook",
+    "expected_author": "imagecreator",
+    "media_type_check": "image"
+  }
+}

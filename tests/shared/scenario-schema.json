@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Twitter Scenario Validation Schema",
-  "description": "Schema for validating Twitter test scenario matrices and fixtures",
+  "title": "Platform Scenario Validation Schema",
+  "description": "Schema for validating shared test scenario matrices and fixtures",
   "definitions": {
     "scenarioExpectation": {
       "type": "object",
@@ -20,13 +20,13 @@
         },
         "filename_pattern": {
           "type": "string",
-          "pattern": "^twitter_[a-zA-Z0-9_]+_copas_io(_[0-9]+)?\\.(jpg|mp4)$"
+          "pattern": "^(twitter|facebook)_[a-zA-Z0-9_]+_copas_io(_[0-9]+)?\\.(jpg|mp4)$"
         },
         "filename_patterns": {
           "type": "array",
           "items": {
             "type": "string",
-            "pattern": "^twitter_[a-zA-Z0-9_]+_copas_io(_[0-9]+)?\\.(jpg|mp4)$"
+            "pattern": "^(twitter|facebook)_[a-zA-Z0-9_]+_copas_io(_[0-9]+)?\\.(jpg|mp4)$"
           },
           "minItems": 1
         }
@@ -49,7 +49,7 @@
         },
         "zip_filename": {
           "type": "string",
-          "pattern": "^twitter_[a-zA-Z0-9_]+_copas_io\\.zip$"
+          "pattern": "^(twitter|facebook)_[a-zA-Z0-9_]+_copas_io\\.zip$"
         },
         "file_count": {
           "type": "integer",
@@ -63,16 +63,16 @@
       "properties": {
         "id": {
           "type": "string",
-          "pattern": "^twitter-[a-z0-9-]+$"
+          "pattern": "^(twitter|facebook)-[a-z0-9-]+$"
         },
         "url": {
           "type": "string",
           "format": "uri",
-          "pattern": "^https://(x\\.com|twitter\\.com)/[^/]+/status/[0-9]+$"
+          "pattern": "^https://((x\\.com|twitter\\.com)/[^/]+/status/[0-9]+|((www\\.)?facebook\\.com|fb\\.watch)/.+)$"
         },
         "platform": {
           "type": "string",
-          "enum": ["twitter"]
+          "enum": ["twitter", "facebook"]
         },
         "author": {
           "type": "string",
@@ -121,7 +121,7 @@
       "properties": {
         "platform": {
           "type": "string",
-          "enum": ["twitter"]
+          "enum": ["twitter", "facebook"]
         },
         "title": {
           "type": "string"
