@@ -25,7 +25,7 @@ jobs:
         run: |
           pip install -r requirements.txt -r requirements-dev.txt
 
-      - name: Run deterministic tests
+      - name: Run deterministic tests (includes Facebook cases)
         working-directory: ./backend
         run: |
           pytest -m "unit or integration or contract" --maxfail=5 -q
@@ -60,7 +60,7 @@ jobs:
         working-directory: ./frontend
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright tests (deterministic)
+      - name: Run Playwright tests (deterministic, includes Facebook discovery)
         working-directory: ./frontend
         run: npx playwright test --grep-invert @live --project=chromium
 
