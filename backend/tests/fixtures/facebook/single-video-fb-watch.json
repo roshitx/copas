@@ -1,0 +1,31 @@
+{
+  "scenario_id": "facebook-single-video-fb-watch",
+  "input_url": "https://fb.watch/AbCdEfG123/",
+  "expected_backend_response": {
+    "platform": "facebook",
+    "author": "fbwatchcreator",
+    "title": "Facebook public fb.watch video",
+    "formats": [
+      {
+        "id": "720",
+        "label": "Video 720p",
+        "type": "video/mp4",
+        "size_mb": 16.8,
+        "download_url": "/api/download?token=mock_token_facebook_fbwatch_video"
+      }
+    ],
+    "thumbnails": [
+      "https://scontent.xx.fbcdn.net/fbwatch-thumb-1.jpg"
+    ],
+    "thumbnail": "https://scontent.xx.fbcdn.net/fbwatch-thumb-1.jpg",
+    "duration": 31
+  },
+  "validation_rules": {
+    "must_have_formats": true,
+    "must_have_thumbnails": true,
+    "expected_platform": "facebook",
+    "expected_author": "fbwatchcreator",
+    "media_type_check": "video",
+    "must_have_duration": true
+  }
+}

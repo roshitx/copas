@@ -1,0 +1,76 @@
+{
+  "scenarios": [
+    {
+      "id": "facebook-single-video-watch",
+      "url": "https://www.facebook.com/watch/?v=61500112233445",
+      "platform": "facebook",
+      "author": "watchcreator",
+      "expected": {
+        "media_count": 1,
+        "types": ["video"],
+        "filename_pattern": "facebook_watchcreator_copas_io.mp4"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "facebook-single-video-videos",
+      "url": "https://www.facebook.com/Meta/videos/61500112233446/",
+      "platform": "facebook",
+      "author": "videoscreator",
+      "expected": {
+        "media_count": 1,
+        "types": ["video"],
+        "filename_pattern": "facebook_videoscreator_copas_io.mp4"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "facebook-single-video-reel",
+      "url": "https://www.facebook.com/reel/61500112233447",
+      "platform": "facebook",
+      "author": "reelcreator",
+      "expected": {
+        "media_count": 1,
+        "types": ["video"],
+        "filename_pattern": "facebook_reelcreator_copas_io.mp4"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "facebook-single-video-fb-watch",
+      "url": "https://fb.watch/AbCdEfG123/",
+      "platform": "facebook",
+      "author": "fbwatchcreator",
+      "expected": {
+        "media_count": 1,
+        "types": ["video"],
+        "filename_pattern": "facebook_fbwatchcreator_copas_io.mp4"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "facebook-single-image-public",
+      "url": "https://www.facebook.com/photo/?fbid=61500112233448&set=a.61500112233449",
+      "platform": "facebook",
+      "author": "imagecreator",
+      "expected": {
+        "media_count": 1,
+        "types": ["image"],
+        "filename_pattern": "facebook_imagecreator_copas_io.jpg"
+      },
+      "zip_expectations": null
+    },
+    {
+      "id": "facebook-out-of-scope-share-v",
+      "url": "https://www.facebook.com/share/v/19AbCdEfGh/",
+      "platform": "facebook",
+      "author": "sharevcreator",
+      "expected": {
+        "media_count": 1,
+        "types": ["video"],
+        "filename_pattern": "facebook_sharevcreator_copas_io.mp4"
+      },
+      "zip_expectations": null
+    }
+  ]
+}

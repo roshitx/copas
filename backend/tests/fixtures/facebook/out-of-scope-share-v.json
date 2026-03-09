@@ -1,0 +1,15 @@
+{
+  "scenario_id": "facebook-out-of-scope-share-v",
+  "input_url": "https://www.facebook.com/share/v/19AbCdEfGh/",
+  "expected_error_response": {
+    "status_code": 400,
+    "error": "UNSUPPORTED_PLATFORM",
+    "message": "Unsupported platform or URL"
+  },
+  "validation_rules": {
+    "should_fail": true,
+    "expected_status_code": 400,
+    "expected_error_code": "UNSUPPORTED_PLATFORM",
+    "must_not_have_formats": true
+  }
+}
