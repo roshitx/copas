@@ -1,0 +1,36 @@
+# OS/editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node/package manager artifacts
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+
+# Test/build outputs
+coverage/
+test-results/
+playwright-report/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local tool state
+.sisyphus/
+.opencode/
+.playwright/
