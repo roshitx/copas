@@ -1,0 +1,41 @@
+{
+  "description": "Instagram Post - video",
+  "url": "https://www.instagram.com/p/video123/",
+  "mock_ytdlp_response": {
+    "id": "video123",
+    "title": "My vacation video",
+    "uploader": "traveluser",
+    "uploader_id": "traveluser",
+    "duration": 60,
+    "thumbnail": "https://scontent.cdninstagram.com/video_thumb.jpg",
+    "thumbnails": [{"url": "https://scontent.cdninstagram.com/video_thumb.jpg"}],
+    "formats": [
+      {
+        "format_id": "0",
+        "url": "https://scontent.cdninstagram.com/video.mp4",
+        "ext": "mp4",
+        "vcodec": "h264",
+        "acodec": "aac",
+        "height": 1080,
+        "width": 1080,
+        "filesize": 15000000
+      }
+    ]
+  },
+  "expected_backend_response": {
+    "platform": "instagram",
+    "title": "My vacation video",
+    "author": "traveluser",
+    "duration": 60,
+    "thumbnail": "https://scontent.cdninstagram.com/video_thumb.jpg",
+    "thumbnails": ["https://scontent.cdninstagram.com/video_thumb.jpg"],
+    "formats": [
+      {
+        "id": "instagram-video",
+        "label": "Video 1080x1080",
+        "type": "video/mp4",
+        "size_mb": 14.31
+      }
+    ]
+  }
+}
