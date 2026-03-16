@@ -1,15 +1,19 @@
 import asyncio
 import os
 import re
+import logging
 from typing import Optional
+
 
 import httpx
 import yt_dlp
+from yt_dlp.networking.impersonate import ImpersonateTarget
 from app.schemas.extract import MediaResult, Format
 import app.services.token_store as _token_store_module
 from app.utils.platform import detect_platform
 from app.services.tiktok_extractor import extract_tiktok_media
-
+from app.utils.facebook_scope import is_facebook_url_in_scope, classify_extraction_error, ErrorClass
+from app.services.facebook_fallback import extract_facebook_via_fallback
 async def extract_media_info(url: str) -> MediaResult:
 
     platform = detect_platform(url)
@@ -26,6 +30,10 @@ async def extract_media_info(url: str) -> MediaResult:
     # Route TikTok to TikWM extractor
     if platform == "tiktok":
         return await extract_tiktok_media(url)
+
+    # Route Facebook through hybrid extraction (primary → fallback if allowed)
+    if platform == "facebook":
+        return await _extract_facebook_hybrid(url)
 
 
     # Normalize x.com -> twitter.com for better yt-dlp compatibility
@@ -415,3 +423,173 @@ async def _build_twitter_image_formats(fx_data: dict, platform: str = "twitter",
             continue
 
     return image_formats
+
+
+async def _extract_facebook_hybrid(url: str) -> MediaResult:
+    """
+    Facebook hybrid extraction flow: primary yt-dlp → fallback if allowed.
+    
+    Path:
+    1. Check URL scope (reject out-of-scope early)
+    2. Attempt primary extraction via yt-dlp
+    3. On failure, classify error
+    4. If ALLOW_FALLBACK, attempt fallback extraction
+    5. If fallback fails or error is terminal, raise appropriately
+    """
+    logger = logging.getLogger(__name__)
+    
+    # Step 1: Check URL scope
+    if not is_facebook_url_in_scope(url):
+        logger.info(f"Facebook URL out of scope: {url}")
+        raise ValueError(
+            "URL Facebook tidak didukung. "
+            "Hanya video publik (watch, reel, videos) yang dapat diunduh."
+        )
+    
+    # Step 2: Attempt primary extraction via yt-dlp (no cookies)
+    loop = asyncio.get_event_loop()
+    primary_error: Exception | None = None
+    
+    try:
+        info = await loop.run_in_executor(None, _extract_info_sync_facebook, url)
+        logger.info(f"Facebook primary extraction succeeded: {url}")
+        
+        # Build MediaResult from yt-dlp info
+        return await _build_facebook_media_result(info, url)
+        
+    except Exception as e:
+        primary_error = e
+        logger.warning(f"Facebook primary extraction failed: {e}")
+    
+    # Step 3: Classify primary error
+    error_class = classify_extraction_error(primary_error)
+    logger.info(
+        f"Facebook error classified: {error_class.value}", 
+        extra={"platform": "facebook", "error_class": error_class.value}
+    )
+    
+    # Step 4: Handle based on error class
+    if error_class == ErrorClass.NO_FALLBACK:
+        # URL validation error - no retry
+        logger.error(f"Facebook NO_FALLBACK error, raising: {primary_error}")
+        raise primary_error
+    
+    if error_class == ErrorClass.TERMINAL_ACCESS:
+        # Auth/access error - no retry without credentials
+        logger.error(f"Facebook TERMINAL_ACCESS error, raising: {primary_error}")
+        raise PermissionError(
+            "Konten Facebook memerlukan login atau tidak dapat diakses. "
+            "Pastikan konten bersifat publik."
+        ) from primary_error
+    
+    # Step 5: Attempt fallback if ALLOW_FALLBACK
+    if error_class == ErrorClass.ALLOW_FALLBACK:
+        logger.info(f"Facebook ALLOW_FALLBACK, attempting fallback for: {url}")
+        try:
+            result = await extract_facebook_via_fallback(url)
+            logger.info(
+                "Facebook fallback succeeded",
+                extra={"platform": "facebook", "path_taken": "fallback"}
+            )
+            return result
+            
+        except Exception as fallback_error:
+            logger.error(
+                f"Facebook fallback failed: {fallback_error}",
+                extra={"platform": "facebook", "path_taken": "fallback_failed"}
+            )
+            # Both primary and fallback failed
+            raise RuntimeError(
+                "Gagal mengekstrak media Facebook. "
+                "Coba lagi atau gunakan URL lain."
+            ) from fallback_error
+    
+    # Should not reach here, but raise generic error if we do
+    raise RuntimeError("Ekstraksi Facebook gagal tanpa alasan spesifik")
+
+
+def _extract_info_sync_facebook(url: str) -> dict:
+    """Synchronous yt-dlp extraction for Facebook (no cookies)."""
+    ydl_opts: dict = {
+        "quiet": True,
+        "no_warnings": True,
+        "extract_flat": False,
+        "http_headers": {
+            "User-Agent": (
+                "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+                "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+                "Version/17.0 Mobile/15E148 Safari/604.1"
+            ),
+        },
+        "socket_timeout": 30,
+        "impersonate": ImpersonateTarget("chrome"),  # Browser impersonation for Facebook anti-scraping bypass
+    }
+
+    # NO cookies for Facebook (as per task requirements)
+    # This is intentional to avoid auth complexity
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        try:
+            info = ydl.extract_info(url, download=False)
+        except yt_dlp.utils.DownloadError as e:
+            msg = str(e)
+            msg_lower = msg.lower()
+            
+            # Map to appropriate error types for classifier
+            auth_keywords = (
+                "login", "private", "cookie", "sign in", "sign_in",
+                "authenticate", "authentication", "forbidden", "403", "401",
+                "unauthorized", "account", "session", "credentials", "not logged",
+            )
+            extract_keywords = (
+                "unable to extract", "video url", "no video formats",
+                "unsupported url", "not a valid",
+            )
+            
+            if any(k in msg_lower for k in auth_keywords):
+                raise PermissionError(
+                    "Konten memerlukan login atau tidak dapat diakses."
+                ) from e
+            if any(k in msg_lower for k in extract_keywords):
+                raise RuntimeError(
+                    "Gagal mengekstrak media. Pastikan link valid."
+                ) from e
+            raise RuntimeError(f"Ekstraksi gagal: {msg}") from e
+    
+    return info
+
+
+async def _build_facebook_media_result(info: dict, original_url: str) -> MediaResult:
+    """Build MediaResult from successful Facebook yt-dlp extraction."""
+    title = info.get("title", "Untitled")
+    author = info.get("uploader_id") or info.get("uploader")
+    thumbnail = info.get("thumbnail")
+    thumbnails: list[str] = []
+    
+    if not thumbnail:
+        info_thumbs = info.get("thumbnails") or []
+        for t in reversed(info_thumbs):
+            if t.get("url"):
+                thumbnail = t["url"]
+                break
+    
+    if thumbnail:
+        thumbnails = [thumbnail]
+    
+    duration = info.get("duration")
+    formats = await _build_formats(info, platform="facebook", author=author)
+    
+    if not formats:
+        raise RuntimeError(
+            "Tidak ada format media yang tersedia untuk video Facebook ini."
+        )
+    
+    return MediaResult(
+        platform="facebook",
+        title=title,
+        author=author,
+        thumbnail=thumbnail,
+        thumbnails=thumbnails,
+        duration=duration,
+        formats=formats,
+    )
