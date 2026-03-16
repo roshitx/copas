@@ -1,0 +1,35 @@
+{
+  "description": "YouTube Shorts - vertical short video",
+  "url": "https://www.youtube.com/shorts/abc123shorts",
+  "mock_ytdlp_response": {
+    "id": "abc123shorts",
+    "title": "Quick Tutorial #shorts",
+    "uploader": "TechCreator",
+    "uploader_id": "TechCreator",
+    "duration": 45,
+    "thumbnail": "https://i.ytimg.com/vi/abc123shorts/maxresdefault.jpg",
+    "thumbnails": [{"url": "https://i.ytimg.com/vi/abc123shorts/maxresdefault.jpg"}],
+    "formats": [
+      {
+        "format_id": "18",
+        "url": "https://rr3---sn-q4flrne7.googlevideo.com/shorts.mp4",
+        "ext": "mp4",
+        "vcodec": "avc1.42001E",
+        "acodec": "mp4a.40.2",
+        "height": 1280,
+        "width": 720,
+        "filesize": null,
+        "tbr": 800
+      }
+    ]
+  },
+  "expected_backend_response": {
+    "platform": "youtube",
+    "title": "Quick Tutorial #shorts",
+    "author": "TechCreator",
+    "duration": 45,
+    "thumbnail": "https://i.ytimg.com/vi/abc123shorts/maxresdefault.jpg",
+    "thumbnails": ["https://i.ytimg.com/vi/abc123shorts/maxresdefault.jpg"],
+    "formats_count_min": 1
+  }
+}

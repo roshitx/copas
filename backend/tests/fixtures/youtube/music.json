@@ -1,0 +1,47 @@
+{
+  "description": "YouTube Music video",
+  "url": "https://music.youtube.com/watch?v=music123",
+  "mock_ytdlp_response": {
+    "id": "music123",
+    "title": "Chill Lofi Beats",
+    "uploader": "Lofi Girl",
+    "uploader_id": "LofiGirl",
+    "duration": 3600,
+    "thumbnail": "https://i.ytimg.com/vi/music123/maxresdefault.jpg",
+    "thumbnails": [{"url": "https://i.ytimg.com/vi/music123/maxresdefault.jpg"}],
+    "formats": [
+      {
+        "format_id": "251",
+        "url": "https://rr3---sn-q4flrne7.googlevideo.com/audio.webm",
+        "ext": "webm",
+        "vcodec": "none",
+        "acodec": "opus",
+        "height": null,
+        "width": null,
+        "filesize": null,
+        "tbr": 160,
+        "abr": 160
+      },
+      {
+        "format_id": "22",
+        "url": "https://rr3---sn-q4flrne7.googlevideo.com/video.mp4",
+        "ext": "mp4",
+        "vcodec": "avc1.64001F",
+        "acodec": "mp4a.40.2",
+        "height": 720,
+        "width": 1280,
+        "filesize": null,
+        "tbr": 1500
+      }
+    ]
+  },
+  "expected_backend_response": {
+    "platform": "youtube",
+    "title": "Chill Lofi Beats",
+    "author": "LofiGirl",
+    "duration": 3600,
+    "thumbnail": "https://i.ytimg.com/vi/music123/maxresdefault.jpg",
+    "thumbnails": ["https://i.ytimg.com/vi/music123/maxresdefault.jpg"],
+    "formats_count_min": 1
+  }
+}

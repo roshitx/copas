@@ -1,0 +1,41 @@
+{
+  "description": "Instagram Post - single image",
+  "url": "https://www.instagram.com/p/xyz789/",
+  "mock_ytdlp_response": {
+    "id": "xyz789",
+    "title": "Beautiful sunset",
+    "uploader": "photouser",
+    "uploader_id": "photouser",
+    "duration": null,
+    "thumbnail": "https://scontent.cdninstagram.com/photo.jpg",
+    "thumbnails": [{"url": "https://scontent.cdninstagram.com/photo.jpg"}],
+    "formats": [
+      {
+        "format_id": "0",
+        "url": "https://scontent.cdninstagram.com/photo.jpg",
+        "ext": "jpg",
+        "vcodec": "none",
+        "acodec": "none",
+        "height": 1080,
+        "width": 1080,
+        "filesize": 500000
+      }
+    ]
+  },
+  "expected_backend_response": {
+    "platform": "instagram",
+    "title": "Beautiful sunset",
+    "author": "photouser",
+    "duration": null,
+    "thumbnail": "https://scontent.cdninstagram.com/photo.jpg",
+    "thumbnails": ["https://scontent.cdninstagram.com/photo.jpg"],
+    "formats": [
+      {
+        "id": "instagram-image",
+        "label": "Image 1080x1080",
+        "type": "image/jpeg",
+        "size_mb": 0.48
+      }
+    ]
+  }
+}

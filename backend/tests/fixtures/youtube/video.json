@@ -1,0 +1,46 @@
+{
+  "description": "YouTube Standard Video",
+  "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "mock_ytdlp_response": {
+    "id": "dQw4w9WgXcQ",
+    "title": "Rick Astley - Never Gonna Give You Up",
+    "uploader": "Rick Astley",
+    "uploader_id": "RickAstleyVEVO",
+    "duration": 212,
+    "thumbnail": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    "thumbnails": [{"url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"}],
+    "formats": [
+      {
+        "format_id": "22",
+        "url": "https://rr3---sn-q4flrne7.googlevideo.com/videoplayback.mp4",
+        "ext": "mp4",
+        "vcodec": "avc1.64001F",
+        "acodec": "mp4a.40.2",
+        "height": 720,
+        "width": 1280,
+        "filesize": null,
+        "tbr": 1500
+      },
+      {
+        "format_id": "18",
+        "url": "https://rr3---sn-q4flrne7.googlevideo.com/videoplayback_360.mp4",
+        "ext": "mp4",
+        "vcodec": "avc1.42001E",
+        "acodec": "mp4a.40.2",
+        "height": 360,
+        "width": 640,
+        "filesize": null,
+        "tbr": 500
+      }
+    ]
+  },
+  "expected_backend_response": {
+    "platform": "youtube",
+    "title": "Rick Astley - Never Gonna Give You Up",
+    "author": "RickAstleyVEVO",
+    "duration": 212,
+    "thumbnail": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    "thumbnails": ["https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"],
+    "formats_count_min": 1
+  }
+}
