@@ -153,6 +153,16 @@ async def extract_media_info(url: str) -> MediaResult:
                 if tweet_photos:
                     thumbnail = tweet_photos[0].get("url")
 
+            # For video-only tweets: fall back to fxtwitter video thumbnail_url
+            if not thumbnail and fx_data:
+                fx_videos = fx_data.get("tweet", {}).get("media", {}).get("videos", [])
+                for fx_vid in fx_videos:
+                    vid_thumb = fx_vid.get("thumbnail_url")
+                    if vid_thumb:
+                        thumbnail = vid_thumb
+                        thumbnails = [vid_thumb]
+                        break
+
             # Always try to get Twitter author from fxtwitter
             if fx_data and not author:
                 tweet_author = fx_data.get("tweet", {}).get("author", {})

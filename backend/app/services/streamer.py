@@ -1,12 +1,33 @@
 import httpx
 from fastapi.responses import StreamingResponse
 from typing import AsyncGenerator
+from urllib.parse import quote
+
+
+def _build_content_disposition(filename: str) -> str:
+    cleaned_filename = filename.replace("\r", "").replace("\n", "").replace('"', "")
+    if not cleaned_filename:
+        cleaned_filename = "download"
+
+    latin1_fallback = cleaned_filename.encode("latin-1", errors="ignore").decode(
+        "latin-1"
+    )
+    if not latin1_fallback:
+        latin1_fallback = "download"
+
+    if latin1_fallback == cleaned_filename:
+        return f'attachment; filename="{latin1_fallback}"'
+
+    encoded_utf8_filename = quote(cleaned_filename, safe="")
+    return (
+        f'attachment; filename="{latin1_fallback}"; '
+        f"filename*=UTF-8''{encoded_utf8_filename}"
+    )
 
 
 async def stream_media(url: str, filename: str, content_type: str) -> StreamingResponse:
-
     # Determine appropriate headers based on the CDN being accessed
-    def _build_headers(target_url: str) -> dict:
+    def _build_headers(target_url: str) -> dict[str, str]:
         headers = {
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -24,7 +45,9 @@ async def stream_media(url: str, filename: str, content_type: str) -> StreamingR
 
     async def generate() -> AsyncGenerator[bytes, None]:
         async with httpx.AsyncClient(follow_redirects=True, timeout=60.0) as client:
-            async with client.stream("GET", url, headers=_build_headers(url)) as response:
+            async with client.stream(
+                "GET", url, headers=_build_headers(url)
+            ) as response:
                 response.raise_for_status()
                 async for chunk in response.aiter_bytes(chunk_size=32768):
                     yield chunk
@@ -33,6 +56,6 @@ async def stream_media(url: str, filename: str, content_type: str) -> StreamingR
         generate(),
         media_type=content_type,
         headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Content-Disposition": _build_content_disposition(filename),
         },
     )
