@@ -1,0 +1,41 @@
+{
+  "scenario_id": "twitter-hybrid-video-image",
+  "input_url": "https://x.com/Villgecrazylady/status/2027532953966825726",
+  "expected_frontend_state": {
+    "platform": "twitter",
+    "author": "Villgecrazylady",
+    "title": "Twitter hybrid tweet (video + image)",
+    "formats": [
+      {
+        "id": "720",
+        "label": "Video 1 · 720p",
+        "type": "video/mp4",
+        "sizeMb": 14.2,
+        "downloadUrl": "/api/download?token=mock_token_hybrid_video"
+      },
+      {
+        "id": "img-2",
+        "label": "Foto 2",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_hybrid_image"
+      }
+    ],
+    "thumbnail": "https://pbs.twimg.com/ext_tw_video_thumb/hybrid_video.jpg",
+    "thumbnails": [
+      "https://pbs.twimg.com/ext_tw_video_thumb/hybrid_video.jpg",
+      "https://pbs.twimg.com/media/hybrid_image.jpg"
+    ],
+    "duration": 25
+  },
+  "ui_expectations": {
+    "should_show_download_button": true,
+    "should_show_multi_download": true,
+    "download_button_label": "Download ZIP (2 media)",
+    "zip_filename": "twitter_Villgecrazylady_copas_io.zip",
+    "thumbnail_visible": true,
+    "duration_visible": true,
+    "bento_grid_visible": true,
+    "bento_grid_items": 2
+  }
+}

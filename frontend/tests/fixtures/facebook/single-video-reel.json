@@ -1,0 +1,31 @@
+{
+  "scenario_id": "facebook-single-video-reel",
+  "input_url": "https://www.facebook.com/reel/61500112233447",
+  "expected_frontend_state": {
+    "platform": "facebook",
+    "author": "reelcreator",
+    "title": "Facebook public reel video",
+    "formats": [
+      {
+        "id": "720",
+        "label": "Video 720p",
+        "type": "video/mp4",
+        "sizeMb": 19.6,
+        "downloadUrl": "/api/download?token=mock_token_facebook_reel_video"
+      }
+    ],
+    "thumbnail": "https://scontent.xx.fbcdn.net/reel-thumb-1.jpg",
+    "thumbnails": [
+      "https://scontent.xx.fbcdn.net/reel-thumb-1.jpg"
+    ],
+    "duration": 27
+  },
+  "ui_expectations": {
+    "should_show_download_button": true,
+    "should_show_single_download": true,
+    "download_button_label": "Download Video 720p",
+    "thumbnail_visible": true,
+    "duration_visible": true,
+    "bento_grid_visible": false
+  }
+}

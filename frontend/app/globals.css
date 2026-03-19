@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme - zinc-based */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 38 92% 50%;
+    --radius: 0.75rem;
+
+    /* Amber brand token */
+    --amber: 38 92% 50%;
+    --amber-foreground: 0 0% 100%;
+  }
+
+  .dark {
+    /* Dark theme */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 4%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 12%;
+    --input: 0 0% 10%;
+    --ring: 38 92% 50%;
+    --radius: 0.75rem;
+
+    /* Amber brand token */
+    --amber: 38 92% 50%;
+    --amber-foreground: 0 0% 4%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    @apply border-border;
+  }
+}
+
+@layer utilities {
+  /* Platform glow utilities */
+  /* Platform ambient glow — used as background on absolute div behind input */
+  .glow-tiktok {
+    background: radial-gradient(ellipse at center, rgba(0, 242, 234, 0.35) 0%, rgba(255, 0, 80, 0.25) 50%, transparent 75%);
+  }
+  .glow-instagram {
+    background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.4) 0%, rgba(236, 72, 153, 0.3) 50%, transparent 75%);
+  }
+  .glow-youtube {
+    background: radial-gradient(ellipse at center, rgba(239, 68, 68, 0.5) 0%, rgba(220, 38, 38, 0.25) 50%, transparent 75%);
+  }
+  .glow-twitter {
+    background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.4) 0%, rgba(56, 189, 248, 0.2) 50%, transparent 75%);
+  }
+  .glow-facebook {
+    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.4) 0%, rgba(96, 165, 250, 0.2) 50%, transparent 75%);
+  }
+  .glow-threads {
+    background: radial-gradient(ellipse at center, rgba(200, 200, 200, 0.2) 0%, rgba(160, 160, 160, 0.1) 50%, transparent 75%);
+  }
+
+  /* Vignette for thumbnails */
+  .vignette {
+    background: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.9) 0%,
+      rgba(10, 10, 10, 0.3) 40%,
+      transparent 100%
+    );
+  }
+
+  /* Shimmer animation for skeleton loading */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 50%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Reduced motion: disable shimmer */
+  @media (prefers-reduced-motion: reduce) {
+    .shimmer::after {
+      animation: none;
+    }
+  }
+}

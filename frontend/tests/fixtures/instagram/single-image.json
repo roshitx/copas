@@ -1,0 +1,30 @@
+{
+  "scenario_id": "instagram-single-image",
+  "input_url": "https://www.instagram.com/p/DFxyz123abc/",
+  "expected_frontend_state": {
+    "platform": "instagram",
+    "author": "photographer_name",
+    "title": null,
+    "formats": [
+      {
+        "id": "img-1",
+        "label": "Foto",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_single_image"
+      }
+    ],
+    "thumbnail": "https://instagram.com/media/single_image.jpg",
+    "thumbnails": [
+      "https://instagram.com/media/single_image.jpg"
+    ],
+    "duration": null
+  },
+  "ui_expectations": {
+    "should_show_download_button": true,
+    "should_show_single_download": true,
+    "download_button_label": "Download Foto",
+    "thumbnail_visible": true,
+    "bento_grid_visible": false
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "scenario_id": "instagram-multi-image-3",
+  "input_url": "https://www.instagram.com/p/DFcarousel789/",
+  "expected_frontend_state": {
+    "platform": "instagram",
+    "author": "travel_blog",
+    "title": null,
+    "formats": [
+      {
+        "id": "img-1",
+        "label": "Foto 1",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_carousel_1"
+      },
+      {
+        "id": "img-2",
+        "label": "Foto 2",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_carousel_2"
+      },
+      {
+        "id": "img-3",
+        "label": "Foto 3",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_carousel_3"
+      }
+    ],
+    "thumbnail": "https://instagram.com/media/carousel1.jpg",
+    "thumbnails": [
+      "https://instagram.com/media/carousel1.jpg",
+      "https://instagram.com/media/carousel2.jpg",
+      "https://instagram.com/media/carousel3.jpg"
+    ],
+    "duration": null
+  },
+  "ui_expectations": {
+    "should_show_download_button": true,
+    "should_show_multi_download": true,
+    "download_button_label": "Download ZIP (3 photos)",
+    "zip_filename": "instagram_travel_blog_copas_io.zip",
+    "thumbnail_visible": true,
+    "duration_visible": false,
+    "bento_grid_visible": true,
+    "bento_grid_items": 3
+  }
+}

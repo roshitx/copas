@@ -1,0 +1,41 @@
+{
+  "scenario_id": "twitter-multi-image-2",
+  "input_url": "https://x.com/IndonesiaGaruda/status/2027914018976108959",
+  "expected_frontend_state": {
+    "platform": "twitter",
+    "author": "IndonesiaGaruda",
+    "title": "Twitter multi-image tweet",
+    "formats": [
+      {
+        "id": "img-1",
+        "label": "Foto 1",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_multi_image_1"
+      },
+      {
+        "id": "img-2",
+        "label": "Foto 2",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_multi_image_2"
+      }
+    ],
+    "thumbnail": "https://pbs.twimg.com/media/multi1.jpg",
+    "thumbnails": [
+      "https://pbs.twimg.com/media/multi1.jpg",
+      "https://pbs.twimg.com/media/multi2.jpg"
+    ],
+    "duration": null
+  },
+  "ui_expectations": {
+    "should_show_download_button": true,
+    "should_show_multi_download": true,
+    "download_button_label": "Download ZIP (2 photos)",
+    "zip_filename": "twitter_IndonesiaGaruda_copas_io.zip",
+    "thumbnail_visible": true,
+    "duration_visible": false,
+    "bento_grid_visible": true,
+    "bento_grid_items": 2
+  }
+}

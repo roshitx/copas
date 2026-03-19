@@ -1,0 +1,31 @@
+{
+  "scenario_id": "facebook-single-video-videos",
+  "input_url": "https://www.facebook.com/Meta/videos/61500112233446/",
+  "expected_frontend_state": {
+    "platform": "facebook",
+    "author": "videoscreator",
+    "title": "Facebook public videos post",
+    "formats": [
+      {
+        "id": "720",
+        "label": "Video 720p",
+        "type": "video/mp4",
+        "sizeMb": 22.1,
+        "downloadUrl": "/api/download?token=mock_token_facebook_videos_video"
+      }
+    ],
+    "thumbnail": "https://scontent.xx.fbcdn.net/videos-thumb-1.jpg",
+    "thumbnails": [
+      "https://scontent.xx.fbcdn.net/videos-thumb-1.jpg"
+    ],
+    "duration": 44
+  },
+  "ui_expectations": {
+    "should_show_download_button": true,
+    "should_show_single_download": true,
+    "download_button_label": "Download Video 720p",
+    "thumbnail_visible": true,
+    "duration_visible": true,
+    "bento_grid_visible": false
+  }
+}

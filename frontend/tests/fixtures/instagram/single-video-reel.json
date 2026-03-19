@@ -1,0 +1,31 @@
+{
+  "scenario_id": "instagram-single-video-reel",
+  "input_url": "https://www.instagram.com/reel/DFabcdefghij/",
+  "expected_frontend_state": {
+    "platform": "instagram",
+    "author": "jaykaktus",
+    "title": null,
+    "formats": [
+      {
+        "id": "reel-720",
+        "label": "Reel 720p",
+        "type": "video/mp4",
+        "sizeMb": 12.5,
+        "downloadUrl": "/api/download?token=mock_token_reel_video"
+      }
+    ],
+    "thumbnail": "https://instagram.com/reel_thumbnail_1.jpg",
+    "thumbnails": [
+      "https://instagram.com/reel_thumbnail_1.jpg"
+    ],
+    "duration": 25
+  },
+  "ui_expectations": {
+    "should_show_download_button": true,
+    "should_show_single_download": true,
+    "download_button_label": "Download Reel 720p",
+    "thumbnail_visible": true,
+    "duration_visible": true,
+    "bento_grid_visible": false
+  }
+}
