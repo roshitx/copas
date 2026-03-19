@@ -6,7 +6,6 @@ Tests token lifecycle: create, get, expire, cleanup
 
 import asyncio
 import time
-from unittest.mock import patch
 
 import pytest
 
@@ -200,3 +199,98 @@ class TestTokenData:
         after = time.time()
 
         assert before <= data.created_at <= after
+
+
+@pytest.mark.unit
+class TestRedisTokenStore:
+    """Tests for Redis-backed token store behavior."""
+
+    @pytest.fixture
+    def redis_store(self):
+        """TokenStore backed by fakeredis."""
+        import fakeredis.aioredis
+        fake_redis = fakeredis.aioredis.FakeRedis(decode_responses=True)
+        store = TokenStore()
+        store._redis = fake_redis
+        return store
+
+    @pytest.mark.asyncio
+    async def test_create_token_stores_in_redis(self, redis_store):
+        """Token is stored in Redis when Redis is available."""
+        token = await redis_store.create_token(
+            download_url="https://example.com/video.mp4",
+            filename="test.mp4",
+            content_type="video/mp4",
+        )
+        assert isinstance(token, str)
+        assert len(token) == 36
+        data = await redis_store.get_token(token)
+        assert data is not None
+        assert data.download_url == "https://example.com/video.mp4"
+
+    @pytest.mark.asyncio
+    async def test_redis_token_not_in_memory_dict(self, redis_store):
+        """When Redis is available, tokens should NOT be in the in-memory dict."""
+        token = await redis_store.create_token(
+            download_url="https://example.com/video.mp4",
+            filename="test.mp4",
+            content_type="video/mp4",
+        )
+        assert token not in redis_store._tokens
+
+    @pytest.mark.asyncio
+    async def test_redis_token_expiry(self, redis_store):
+        """Redis token respects TTL — expired tokens return None."""
+        token = await redis_store.create_token(
+            download_url="https://example.com/video.mp4",
+            filename="test.mp4",
+            content_type="video/mp4",
+        )
+        await redis_store._redis.delete(f"token:{token}")
+        result = await redis_store.get_token(token)
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_fallback_to_memory_when_redis_none(self):
+        """Falls back to in-memory when Redis is None."""
+        store = TokenStore()
+        store._redis = None
+        token = await store.create_token(
+            download_url="https://example.com/video.mp4",
+            filename="test.mp4",
+            content_type="video/mp4",
+        )
+        assert token in store._tokens
+        data = await store.get_token(token)
+        assert data is not None
+
+    @pytest.mark.asyncio
+    async def test_cleanup_noop_with_redis(self, redis_store):
+        """cleanup_expired is a no-op when Redis is available."""
+        token = await redis_store.create_token(
+            download_url="https://example.com/video.mp4",
+            filename="test.mp4",
+            content_type="video/mp4",
+        )
+        await redis_store.cleanup_expired()
+        data = await redis_store.get_token(token)
+        assert data is not None
+
+
+@pytest.mark.unit
+class TestTokenDataSerialization:
+    """Test TokenData JSON serialization round-trip."""
+
+    def test_to_json_and_from_json(self):
+        original = TokenData(
+            download_url="https://example.com/file.mp4",
+            filename="file.mp4",
+            content_type="video/mp4",
+            created_at=1234567890.0,
+        )
+        json_str = original.to_json()
+        restored = TokenData.from_json(json_str)
+        assert restored.download_url == original.download_url
+        assert restored.filename == original.filename
+        assert restored.content_type == original.content_type
+        assert restored.created_at == original.created_at

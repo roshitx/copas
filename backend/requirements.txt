@@ -7,3 +7,5 @@
 #YX|pydantic==2.9.2
 #QS|pydantic-settings==2.5.2
 #FB|curl_cffi>=0.7.0  # Required for yt-dlp browser impersonation (Facebook extraction)
+redis[hiredis]>=5.0.0
+tenacity>=8.2.0

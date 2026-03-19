@@ -21,6 +21,7 @@ def client():
 @pytest.fixture
 def mock_token_store(monkeypatch):
     fresh_store = MockTokenStore(ttl_seconds=5)
+    fresh_store._redis = None  # Force in-memory mode for tests
     monkeypatch.setattr("app.routers.download.token_store", fresh_store)
     monkeypatch.setattr("app.services.token_store.token_store", fresh_store)
     # Patch the token_store in extractor module (accessed via _token_store_module)
@@ -42,6 +43,16 @@ def reset_rate_limiter():
     # Clear any existing rate limit storage
     limiter.reset()
     yield
+
+
+@pytest.fixture(autouse=True)
+def reset_extraction_cache():
+    """Clear extraction cache before each test to prevent cross-test contamination."""
+    from app.services.cache import extraction_cache
+
+    extraction_cache._memory.clear()
+    yield
+    extraction_cache._memory.clear()
 
 
 @pytest.fixture

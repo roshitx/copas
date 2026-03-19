@@ -12,13 +12,22 @@ from slowapi.errors import RateLimitExceeded
 from starlette.responses import Response
 
 from .routers import extract, download
-from .services.token_store import start_cleanup_task
+from .services.redis_client import get_redis, close_redis
+from .services.token_store import token_store, start_cleanup_task
+from .services.cache import extraction_cache
 
 # Logger for startup/security configuration warnings
 logger = logging.getLogger(__name__)
 
-# Initialize limiter
-limiter = Limiter(key_func=get_remote_address)
+# Initialize limiter — uses Redis for persistence when available
+def _create_limiter() -> Limiter:
+    redis_url = os.getenv("REDIS_URL")
+    if redis_url:
+        return Limiter(key_func=get_remote_address, storage_uri=redis_url)
+    return Limiter(key_func=get_remote_address)
+
+
+limiter = _create_limiter()
 
 
 def _parse_allowed_origins() -> list[str]:
@@ -66,17 +75,29 @@ def _rate_limit_handler(request: Request, exc: Exception) -> Response:
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     """Lifespan context manager for startup/shutdown events."""
-    # Startup: start token cleanup task
+    # Startup: connect Redis
+    redis = await get_redis()
+    await token_store.init_redis(redis)
+    extraction_cache._redis = redis
+
+    if redis:
+        logger.info("Redis connected — token store and cache using Redis backend")
+    else:
+        logger.info("No Redis — using in-memory fallback for tokens and cache")
+
+    # Startup: start token cleanup task (only needed for in-memory mode)
     cleanup_task = asyncio.create_task(start_cleanup_task())
 
     yield
 
-    # Shutdown: cancel cleanup task
+    # Shutdown: cancel cleanup task and close Redis
     _ = cleanup_task.cancel()
     try:
         await cleanup_task
     except asyncio.CancelledError:
         pass
+
+    await close_redis()
 
 
 # Create FastAPI app

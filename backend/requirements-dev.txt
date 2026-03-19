@@ -5,3 +5,4 @@ respx==0.21.1
 pytest-cov==6.0.0
 pytest-socket==0.7.0
 httpx==0.27.2
+fakeredis[lua]>=2.21.0
