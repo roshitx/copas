@@ -14,6 +14,10 @@ from app.utils.platform import detect_platform
 from app.services.tiktok_extractor import extract_tiktok_media
 from app.utils.facebook_scope import is_facebook_url_in_scope, classify_extraction_error, ErrorClass
 from app.services.facebook_fallback import extract_facebook_via_fallback
+from app.services.cache import extraction_cache
+from app.services.retry import with_retry, RetryableError
+
+
 async def extract_media_info(url: str) -> MediaResult:
 
     platform = detect_platform(url)
@@ -26,6 +30,11 @@ async def extract_media_info(url: str) -> MediaResult:
             "Platform Threads belum didukung. "
             "Coba download manual dari aplikasi Threads."
         )
+
+    # Check cache before extraction
+    cached = await extraction_cache.get(url)
+    if cached:
+        return MediaResult(**cached)
 
     # Route TikTok to TikWM extractor
     if platform == "tiktok":
@@ -48,14 +57,18 @@ async def extract_media_info(url: str) -> MediaResult:
 
     if platform == "twitter":
         try:
-            info = await loop.run_in_executor(None, _extract_info_sync, normalized_url)
+            async def _twitter_extract():
+                return await loop.run_in_executor(None, _extract_info_sync, normalized_url)
+            info = await with_retry(_twitter_extract, max_attempts=2, wait_seconds=2.0)
         except RuntimeError as e:
             if "no video could be found" in str(e).lower():
                 no_video_error = True
             else:
                 raise
     else:
-        info = await loop.run_in_executor(None, _extract_info_sync, normalized_url)
+        async def _generic_extract():
+            return await loop.run_in_executor(None, _extract_info_sync, normalized_url)
+        info = await with_retry(_generic_extract, max_attempts=2, wait_seconds=2.0)
 
     title = "Unknown"
     author: str | None = None
@@ -119,7 +132,7 @@ async def extract_media_info(url: str) -> MediaResult:
     if platform == "twitter":
         tweet_id = _extract_tweet_id(url)
         if tweet_id:
-            fx_data = await _fetch_fxtwitter(tweet_id)
+            fx_data = await with_retry(_fetch_fxtwitter, tweet_id, max_attempts=2, wait_seconds=1.0)
             image_formats = await _build_twitter_image_formats(fx_data, platform=platform, author=author)
             formats.extend(image_formats)
 
@@ -173,7 +186,7 @@ async def extract_media_info(url: str) -> MediaResult:
             "Konten mungkin memerlukan autentikasi atau tidak didukung."
         )
 
-    return MediaResult(
+    result = MediaResult(
         platform=platform,
         title=title,
         author=author,
@@ -183,7 +196,10 @@ async def extract_media_info(url: str) -> MediaResult:
         formats=formats,
     )
 
+    # Cache the successful result
+    await extraction_cache.set(url, result.model_dump())
 
+    return result
 
 
 def _extract_info_sync(url: str) -> dict:
@@ -237,6 +253,9 @@ def _extract_info_sync(url: str) -> dict:
                     "Gagal mengekstrak media. "
                     "Pastikan link valid dan konten bisa diakses publik."
                 ) from e
+            network_keywords = ("timed out", "connection", "network", "reset", "refused", "unavailable")
+            if any(k in msg_lower for k in network_keywords):
+                raise RetryableError(f"Transient extraction error: {msg}") from e
             raise RuntimeError(f"Ekstraksi gagal: {msg}") from e
 
     return info
@@ -461,12 +480,16 @@ async def _extract_facebook_hybrid(url: str) -> MediaResult:
     primary_error: Exception | None = None
     
     try:
-        info = await loop.run_in_executor(None, _extract_info_sync_facebook, url)
+        async def _fb_extract():
+            return await loop.run_in_executor(None, _extract_info_sync_facebook, url)
+        info = await with_retry(_fb_extract, max_attempts=2, wait_seconds=2.0)
         logger.info(f"Facebook primary extraction succeeded: {url}")
         
         # Build MediaResult from yt-dlp info
-        return await _build_facebook_media_result(info, url)
-        
+        result = await _build_facebook_media_result(info, url)
+        await extraction_cache.set(url, result.model_dump())
+        return result
+
     except Exception as e:
         primary_error = e
         logger.warning(f"Facebook primary extraction failed: {e}")
@@ -497,6 +520,8 @@ async def _extract_facebook_hybrid(url: str) -> MediaResult:
         logger.info(f"Facebook ALLOW_FALLBACK, attempting fallback for: {url}")
         try:
             result = await extract_facebook_via_fallback(url)
+            cache_data = result.model_dump() if hasattr(result, "model_dump") else result
+            await extraction_cache.set(url, cache_data)
             logger.info(
                 "Facebook fallback succeeded",
                 extra={"platform": "facebook", "path_taken": "fallback"}
@@ -564,8 +589,11 @@ def _extract_info_sync_facebook(url: str) -> dict:
                 raise RuntimeError(
                     "Gagal mengekstrak media. Pastikan link valid."
                 ) from e
+            network_keywords = ("timed out", "connection", "network", "reset", "refused", "unavailable")
+            if any(k in msg_lower for k in network_keywords):
+                raise RetryableError(f"Transient extraction error: {msg}") from e
             raise RuntimeError(f"Ekstraksi gagal: {msg}") from e
-    
+
     return info
 
 

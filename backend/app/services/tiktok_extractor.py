@@ -4,6 +4,7 @@ from typing import Optional
 import httpx
 from app.schemas.extract import MediaResult, Format
 import app.services.token_store as _token_store_module
+from app.services.retry import with_retry
 
 
 class TikWMError(Exception):
@@ -29,7 +30,7 @@ TIKWM_API_URL = "https://www.tikwm.com/api/"
 
 async def extract_tiktok_media(url: str) -> MediaResult:
     """Extract media info from TikTok URL using TikWM API."""
-    data = await _fetch_tikwm_data(url)
+    data = await with_retry(_fetch_tikwm_data, url, max_attempts=2, wait_seconds=1.0)
     return await _build_media_result(data)
 
 
