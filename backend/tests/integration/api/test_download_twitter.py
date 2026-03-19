@@ -1,6 +1,7 @@
 import pytest
 import respx
 from httpx import Response
+from urllib.parse import quote
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
@@ -52,6 +53,25 @@ class TestDownloadTokenValidation:
         response = client.get("/api/download")
 
         assert response.status_code == 422
+
+
+class TestDownloadTokenValidationEndpoint:
+    async def test_valid_token_returns_200(self, client, mock_token_store):
+        token = await mock_token_store.create_token(
+            download_url="https://video.twimg.com/test_video.mp4",
+            filename="test_video.mp4",
+            content_type="video/mp4",
+        )
+
+        response = client.get(f"/api/download/validate?token={token}")
+
+        assert response.status_code == 200
+        assert response.json() == {"valid": True}
+
+    async def test_invalid_token_returns_410(self, client):
+        response = client.get("/api/download/validate?token=invalid-token-12345")
+
+        assert response.status_code == 410
 
 
 class TestDownloadHeaders:
@@ -111,6 +131,25 @@ class TestDownloadHeaders:
 
         response = client.get(f"/api/download?token={image_token}")
         assert response.headers.get("content-type") == "image/png"
+
+    async def test_content_disposition_handles_unicode_filename(
+        self, client, mock_token_store, mock_upstream_media
+    ):
+        unicode_filename = "twitter_🔥_東京.mp4"
+        token = await mock_token_store.create_token(
+            download_url="https://video.twimg.com/unicode.mp4",
+            filename=unicode_filename,
+            content_type="video/mp4",
+        )
+
+        mock_upstream_media("https://video.twimg.com/unicode.mp4")
+
+        response = client.get(f"/api/download?token={token}")
+
+        assert response.status_code == 200
+        content_disp = response.headers.get("Content-Disposition", "")
+        assert "filename*=UTF-8''" in content_disp
+        assert quote(unicode_filename, safe="") in content_disp
 
 
 class TestDownloadStreaming:

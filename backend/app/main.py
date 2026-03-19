@@ -1,22 +1,70 @@
 import asyncio
+import logging
 import os
 from contextlib import asynccontextmanager
+from typing import cast
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from starlette.responses import Response
 
-from app.routers import extract, download
-from app.services.token_store import start_cleanup_task
+from .routers import extract, download
+from .services.token_store import start_cleanup_task
+
+# Logger for startup/security configuration warnings
+logger = logging.getLogger(__name__)
 
 # Initialize limiter
 limiter = Limiter(key_func=get_remote_address)
 
 
+def _parse_allowed_origins() -> list[str]:
+    """Parse and validate CORS origins from environment.
+
+    - Trims whitespace
+    - Drops empty entries
+    - Disallows wildcard in production
+    - Uses strict localhost fallback only in development
+    """
+    env = os.getenv("ENV", "development").strip().lower()
+    dev_envs = {"dev", "development", "local"}
+    localhost_fallback = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+    raw_origins = os.getenv("ALLOWED_ORIGINS", "")
+    origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+
+    if "*" in origins:
+        if env in dev_envs:
+            logger.warning(
+                "ALLOWED_ORIGINS contains wildcard '*'. Falling back to strict localhost list in development."
+            )
+            return localhost_fallback
+        raise RuntimeError("Wildcard ALLOWED_ORIGINS is not allowed in production.")
+
+    if origins:
+        return origins
+
+    if env in dev_envs:
+        logger.warning(
+            "ALLOWED_ORIGINS is empty. Falling back to strict localhost list in development."
+        )
+        return localhost_fallback
+
+    raise RuntimeError(
+        "ALLOWED_ORIGINS must be set to explicit origins in non-development environments."
+    )
+
+
+def _rate_limit_handler(request: Request, exc: Exception) -> Response:
+    """Typed wrapper to satisfy FastAPI exception handler signature."""
+    return _rate_limit_exceeded_handler(request, cast(RateLimitExceeded, exc))
+
+
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     """Lifespan context manager for startup/shutdown events."""
     # Startup: start token cleanup task
     cleanup_task = asyncio.create_task(start_cleanup_task())
@@ -24,7 +72,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown: cancel cleanup task
-    cleanup_task.cancel()
+    _ = cleanup_task.cancel()
     try:
         await cleanup_task
     except asyncio.CancelledError:
@@ -41,10 +89,10 @@ app = FastAPI(
 
 # Add rate limit exception handler
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_handler)
 
 # CORS middleware
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+allowed_origins = _parse_allowed_origins()
 
 app.add_middleware(
     CORSMiddleware,
