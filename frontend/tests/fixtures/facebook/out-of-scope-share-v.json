@@ -1,0 +1,14 @@
+{
+  "scenario_id": "facebook-out-of-scope-share-v",
+  "input_url": "https://www.facebook.com/share/v/19AbCdEfGh/",
+  "expected_error_state": {
+    "status": "error",
+    "error_code": "UNSUPPORTED_PLATFORM",
+    "message": "Unsupported platform or URL"
+  },
+  "ui_expectations": {
+    "should_show_error_alert": true,
+    "should_show_download_button": false,
+    "error_message_visible": true
+  }
+}

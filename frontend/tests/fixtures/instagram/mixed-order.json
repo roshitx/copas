@@ -1,0 +1,49 @@
+{
+  "scenario_id": "instagram-mixed-order",
+  "input_url": "https://www.instagram.com/p/DFmixed321/",
+  "expected_frontend_state": {
+    "platform": "instagram",
+    "author": "creative_studio",
+    "title": null,
+    "formats": [
+      {
+        "id": "img-1",
+        "label": "Foto 1",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_mixed_img1"
+      },
+      {
+        "id": "video-2",
+        "label": "Video 2 · 1080p",
+        "type": "video/mp4",
+        "sizeMb": 22.8,
+        "downloadUrl": "/api/download?token=mock_token_mixed_video"
+      },
+      {
+        "id": "img-3",
+        "label": "Foto 3",
+        "type": "image/jpeg",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_mixed_img3"
+      }
+    ],
+    "thumbnail": "https://instagram.com/media/mixed_image1.jpg",
+    "thumbnails": [
+      "https://instagram.com/media/mixed_image1.jpg",
+      "https://instagram.com/media/mixed_video_thumb.jpg",
+      "https://instagram.com/media/mixed_image3.jpg"
+    ],
+    "duration": 35
+  },
+  "ui_expectations": {
+    "should_show_download_button": true,
+    "should_show_multi_download": true,
+    "download_button_label": "Download ZIP (3 media)",
+    "zip_filename": "instagram_creative_studio_copas_io.zip",
+    "thumbnail_visible": true,
+    "duration_visible": true,
+    "bento_grid_visible": true,
+    "bento_grid_items": 3
+  }
+}
