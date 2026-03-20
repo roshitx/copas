@@ -3,6 +3,8 @@ from fastapi.responses import StreamingResponse
 from typing import AsyncGenerator
 from urllib.parse import quote
 
+from app.utils.url_validator import validate_public_url
+
 
 def _build_content_disposition(filename: str) -> str:
     cleaned_filename = filename.replace("\r", "").replace("\n", "").replace('"', "")
@@ -26,6 +28,8 @@ def _build_content_disposition(filename: str) -> str:
 
 
 async def stream_media(url: str, filename: str, content_type: str) -> StreamingResponse:
+    validate_public_url(url)
+
     # Determine appropriate headers based on the CDN being accessed
     def _build_headers(target_url: str) -> dict[str, str]:
         headers = {

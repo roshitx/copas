@@ -92,7 +92,7 @@ export function UrlInput({ onSubmit, isLoading, onReset }: UrlInputProps) {
             setError(null)
           }}
 
-          placeholder="Tempel link video di sini..."
+          placeholder="Tempel link video atau foto di sini..."
           className="flex-1 h-full bg-transparent px-5 text-sm sm:text-base text-zinc-100 placeholder:text-zinc-600 outline-none"
           disabled={isLoading}
           autoComplete="off"

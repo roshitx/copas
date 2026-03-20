@@ -9,3 +9,5 @@
 #FB|curl_cffi>=0.7.0  # Required for yt-dlp browser impersonation (Facebook extraction)
 redis[hiredis]>=5.0.0
 tenacity>=8.2.0
+sentry-sdk[fastapi]>=2.0.0
+python-json-logger>=2.0.0

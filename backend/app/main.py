@@ -11,13 +11,31 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from starlette.responses import Response
 
+import sentry_sdk
+from sentry_sdk.integrations.fastapi import FastApiIntegration
+
 from .routers import extract, download
 from .services.redis_client import get_redis, close_redis
 from .services.token_store import token_store, start_cleanup_task
 from .services.cache import extraction_cache
+from .core.logging_config import setup_logging
 
 # Logger for startup/security configuration warnings
 logger = logging.getLogger(__name__)
+
+# Initialize structured logging
+setup_logging()
+
+# Initialize Sentry (no-op if SENTRY_DSN is empty)
+_sentry_dsn = os.getenv("SENTRY_DSN", "")
+if _sentry_dsn:
+    sentry_sdk.init(
+        dsn=_sentry_dsn,
+        integrations=[FastApiIntegration()],
+        traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
+        environment=os.getenv("ENVIRONMENT", "development"),
+    )
+    logger.info("Sentry initialized", extra={"environment": os.getenv("ENVIRONMENT", "development")})
 
 # Initialize limiter — uses Redis for persistence when available
 def _create_limiter() -> Limiter:
