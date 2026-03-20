@@ -2,9 +2,16 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 import math
 
+from app.utils.url_validator import validate_public_url
+
 
 class ExtractRequest(BaseModel):
     url: str = Field(..., description="The URL of the media to extract")
+
+    @field_validator("url")
+    @classmethod
+    def validate_url(cls, v: str) -> str:
+        return validate_public_url(v)
 
 
 class Format(BaseModel):
@@ -28,11 +35,11 @@ class MediaResult(BaseModel):
 
     @field_validator("duration", mode="before")
     @classmethod
-    def coerce_duration(cls, v: object) -> Optional[int]:
+    def coerce_duration(cls, v: object) -> Optional[int]:  # noqa: N805
         if v is None:
             return None
         try:
-            return int(math.floor(float(v)))
+            return int(math.floor(float(str(v))))
         except (TypeError, ValueError):
             return None
     formats: List[Format] = Field(

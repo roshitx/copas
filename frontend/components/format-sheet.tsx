@@ -4,8 +4,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/com
 import { Button } from '@/components/ui/button'
 import { FormatButton } from './format-button'
 import { useDownload } from '@/hooks/use-download'
-import type { MediaResult, Format } from '@/types'
+import type { MediaResult } from '@/types'
 import { Download, X, Film, Image as ImageIcon, Music } from 'lucide-react'
+import { categorizeFormats, groupVideoFormats } from '@/lib/format-utils'
 
 
 interface FormatSheetProps {
@@ -17,27 +18,7 @@ interface FormatSheetProps {
 export function FormatSheet({ result, open, onOpenChange }: FormatSheetProps) {
   const { downloadAllAsZip, isDownloadingAll, downloadProgress, cancelDownload } = useDownload()
 
-  const videoFormats = result.formats.filter(
-    (f) => f.type.toLowerCase().includes('video') || f.type.toLowerCase().includes('mp4')
-  )
-  const imageFormats = result.formats.filter((f) => f.type.toLowerCase().includes('image'))
-  const audioFormats = result.formats.filter((f) => f.type.toLowerCase().includes('audio'))
-
-  // Group video formats by quality (same logic as result-card.tsx)
-  const groupVideoFormats = (formats: Format[]) => {
-    const groups: Record<string, Format[]> = {}
-    formats.forEach((format) => {
-      const qualityMatch = format.label.match(/\d+p/)
-      const quality = qualityMatch ? qualityMatch[0] : 'Other'
-      if (!groups[quality]) groups[quality] = []
-      groups[quality].push(format)
-    })
-    return Object.entries(groups).sort(([a], [b]) => {
-      const aNum = parseInt(a) || 0
-      const bNum = parseInt(b) || 0
-      return bNum - aNum
-    })
-  }
+  const { videoFormats, imageFormats, audioFormats } = categorizeFormats(result.formats)
 
   const handleDownloadAll = () => {
     if (imageFormats.length > 1) {
@@ -78,13 +59,13 @@ export function FormatSheet({ result, open, onOpenChange }: FormatSheetProps) {
               </div>
               <div className="space-y-2">
                 {hasMultipleVideos ? (
-                  groupVideoFormats(videoFormats).map(([quality, formats]) => (
-                    <div key={quality}>
+                  groupVideoFormats(videoFormats).map((group) => (
+                    <div key={group.label}>
                       <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500">
-                        {quality}
+                        {group.label}
                       </p>
                       <div className="space-y-1">
-                        {formats.map((format, idx) => (
+                        {group.formats.map((format, idx) => (
                           <FormatButton
                             key={`${format.id || idx}-${format.label}`}
                             format={format}

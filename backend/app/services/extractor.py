@@ -1,4 +1,5 @@
 import asyncio
+import html
 import os
 import re
 import logging
@@ -65,6 +66,15 @@ async def extract_media_info(url: str) -> MediaResult:
                 no_video_error = True
             else:
                 raise
+    elif platform == "instagram":
+        try:
+            async def _ig_extract():
+                return await loop.run_in_executor(None, _extract_info_sync, normalized_url)
+            info = await with_retry(_ig_extract, max_attempts=2, wait_seconds=2.0)
+        except RuntimeError as e:
+            if "there is no video in this post" in str(e).lower():
+                return await _extract_instagram_photos(url)
+            raise
     else:
         async def _generic_extract():
             return await loop.run_in_executor(None, _extract_info_sync, normalized_url)
@@ -181,6 +191,11 @@ async def extract_media_info(url: str) -> MediaResult:
                 tweet_author = fx_data.get("tweet", {}).get("author", {})
                 author = tweet_author.get("screen_name") or tweet_author.get("name")
     if not formats:
+        # Instagram carousel/photo posts: yt-dlp returns playlist but no video formats
+        if platform == "instagram":
+            return await _extract_instagram_photos(
+                url, ytdlp_title=title if title != "Unknown" else None, ytdlp_author=author,
+            )
         raise RuntimeError(
             "Tidak ada format media yang tersedia untuk link ini. "
             "Konten mungkin memerlukan autentikasi atau tidak didukung."
@@ -452,6 +467,138 @@ async def _build_twitter_image_formats(fx_data: dict, platform: str = "twitter",
             continue
 
     return image_formats
+
+
+async def _extract_instagram_photos(
+    url: str,
+    ytdlp_title: str | None = None,
+    ytdlp_author: str | None = None,
+) -> MediaResult:
+    """Fallback for Instagram photo-only posts. Scrapes og:image from the page."""
+    logger = logging.getLogger(__name__)
+    shortcode = _extract_instagram_shortcode(url)
+    if not shortcode:
+        raise RuntimeError(
+            "Gagal memproses postingan Instagram. "
+            "Postingan mungkin dari akun privat atau telah dihapus."
+        )
+
+    photo_urls: list[str] = []
+    title = ytdlp_title or "Instagram Post"
+    author = ytdlp_author
+
+    try:
+        async with httpx.AsyncClient(
+            timeout=15.0,
+            follow_redirects=True,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+                    "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+                    "Version/17.0 Mobile/15E148 Safari/604.1"
+                ),
+            },
+        ) as client:
+            # Method 1: Try Instagram oEmbed API
+            try:
+                oembed_url = f"https://api.instagram.com/oembed/?url=https://www.instagram.com/p/{shortcode}/"
+                resp = await client.get(oembed_url)
+                if resp.status_code == 200 and "json" in resp.headers.get("content-type", ""):
+                    data = resp.json()
+                    raw_title = data.get("title") or ""
+                    title = html.unescape(raw_title) if raw_title else "Instagram Post"
+                    author = data.get("author_name")
+                    thumb = data.get("thumbnail_url")
+                    if thumb:
+                        photo_urls.append(thumb)
+            except Exception:
+                pass
+
+            # Method 2: Scrape og:image from the post page
+            if not photo_urls:
+                page_resp = await client.get(f"https://www.instagram.com/p/{shortcode}/")
+                if page_resp.status_code == 200:
+                    body = page_resp.text
+                    og_matches = re.findall(
+                        r'<meta\s+[^>]*?property="og:image"[^>]*?content="([^"]+)"',
+                        body,
+                    )
+                    if not og_matches:
+                        og_matches = re.findall(
+                            r'<meta\s+[^>]*?content="([^"]+)"[^>]*?property="og:image"',
+                            body,
+                        )
+                    for img_url in og_matches:
+                        clean_url = img_url.replace("&amp;", "&")
+                        if clean_url not in photo_urls:
+                            photo_urls.append(clean_url)
+
+                    if title == "Instagram Post":
+                        og_title = re.search(
+                            r'<meta\s+[^>]*?property="og:title"[^>]*?content="([^"]+)"', body
+                        )
+                        if not og_title:
+                            og_title = re.search(
+                                r'<meta\s+[^>]*?content="([^"]+)"[^>]*?property="og:title"', body
+                            )
+                        if og_title:
+                            title = html.unescape(og_title.group(1))[:100]
+
+    except Exception as e:
+        logger.warning(f"Instagram photo extraction failed: {e}")
+
+    if not photo_urls:
+        raise RuntimeError(
+            "Gagal memproses postingan Instagram. "
+            "Postingan mungkin dari akun privat atau telah dihapus."
+        )
+
+    # Build formats from photo URLs
+    formats: list[Format] = []
+    for i, img_url in enumerate(photo_urls, start=1):
+        label = f"Foto {i}" if len(photo_urls) > 1 else "Foto"
+        fake_fmt = {
+            "format_id": f"ig-photo-{i}",
+            "url": img_url,
+            "ext": "jpg",
+            "filesize": None,
+        }
+        try:
+            fmt = await _create_format(
+                fake_fmt, label, "image/jpeg",
+                platform="instagram", author=author,
+                index=i if len(photo_urls) > 1 else 0,
+            )
+            formats.append(fmt)
+        except Exception:
+            continue
+
+    if not formats:
+        raise RuntimeError(
+            "Gagal memproses postingan Instagram. "
+            "Postingan mungkin dari akun privat atau telah dihapus."
+        )
+
+    thumbnail = photo_urls[0] if photo_urls else None
+
+    result = MediaResult(
+        platform="instagram",
+        title=title,
+        author=author,
+        thumbnail=thumbnail,
+        thumbnails=photo_urls,
+        duration=None,
+        formats=formats,
+    )
+
+    await extraction_cache.set(url, result.model_dump())
+    return result
+
+
+def _extract_instagram_shortcode(url: str) -> Optional[str]:
+    """Extract shortcode from Instagram URL."""
+    match = re.search(r"instagram\.com/(?:p|reel|reels)/([A-Za-z0-9_-]+)", url)
+    return match.group(1) if match else None
 
 
 async def _extract_facebook_hybrid(url: str) -> MediaResult:

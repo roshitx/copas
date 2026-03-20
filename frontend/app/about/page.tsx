@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { PlatformIcon } from "@/components/platform-icon";
+import { SUPPORTED_PLATFORMS } from "@/lib/constants";
 
 export const metadata: Metadata = {
     title: "Tentang Kami | Copas.io",
@@ -90,21 +92,25 @@ export default function AboutPage() {
                             Platform yang Didukung
                         </h2>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                            {[
-                                "TikTok",
-                                "Instagram",
-                                "YouTube",
-                                "X (Twitter)",
-                                "Facebook",
-                                "Threads",
-                            ].map((platform) => (
-                                <div
-                                    key={platform}
-                                    className="rounded-lg border border-border bg-card px-4 py-3 text-center text-sm font-medium text-foreground"
-                                >
-                                    {platform}
-                                </div>
-                            ))}
+                            {(() => {
+                                const displayNames: Record<string, string> = {
+                                    tiktok: "TikTok",
+                                    instagram: "Instagram",
+                                    youtube: "YouTube",
+                                    twitter: "X (Twitter)",
+                                    facebook: "Facebook",
+                                    threads: "Threads",
+                                };
+                                return SUPPORTED_PLATFORMS.map((platform) => (
+                                    <div
+                                        key={platform}
+                                        className="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground"
+                                    >
+                                        <PlatformIcon platform={platform} size={20} />
+                                        <span>{displayNames[platform]}</span>
+                                    </div>
+                                ));
+                            })()}
                         </div>
                     </section>
 

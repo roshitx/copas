@@ -1,6 +1,8 @@
+import type { ZodType } from 'zod'
 import type { ExtractRequest, MediaResult, ApiError } from '@/types'
 import { API_ROUTES } from '@/lib/api-routes'
 import { REQUEST_TIMEOUT_MS } from '@/lib/constants'
+import { MediaResultSchema } from '@/lib/schemas'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8000'
 
@@ -15,7 +17,7 @@ class ApiClientError extends Error {
   }
 }
 
-async function handleResponse<T>(res: Response): Promise<T> {
+async function handleResponse<T>(res: Response, schema?: ZodType<T>): Promise<T> {
   if (!res.ok) {
     let errorBody: ApiError | null = null
     let detailBody: ApiError | null = null
@@ -56,7 +58,9 @@ async function handleResponse<T>(res: Response): Promise<T> {
       res.status,
     )
   }
-  return res.json() as Promise<T>
+  const data = await res.json()
+  if (schema) return schema.parse(data)
+  return data as T
 }
 
 export async function extractMedia(request: ExtractRequest): Promise<MediaResult> {
@@ -70,7 +74,7 @@ export async function extractMedia(request: ExtractRequest): Promise<MediaResult
       body: JSON.stringify(request),
       signal: controller.signal,
     })
-    return handleResponse<MediaResult>(res)
+    return handleResponse<MediaResult>(res, MediaResultSchema)
   } finally {
     clearTimeout(timeoutId)
   }

@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 import { useDownloadStore } from '@/store/download-store'
+import { useHistoryStore } from '@/store/history-store'
 import {
   extractMedia,
   triggerBrowserDownload,
@@ -56,6 +57,7 @@ function getExt(format: Format): string {
 
 export function useDownload() {
   const store = useDownloadStore()
+  const addEntry = useHistoryStore((s) => s.addEntry)
   const [isDownloadingAll, setIsDownloadingAll] = useState(false)
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -73,6 +75,12 @@ export function useDownload() {
     try {
       const result = await extractMedia({ url })
       store.setResult(result)
+      addEntry({
+        url,
+        platform,
+        title: result.title,
+        thumbnail: result.thumbnail,
+      })
     } catch (err) {
       if (err instanceof ApiClientError) {
         store.setError(err.message, err.code)
