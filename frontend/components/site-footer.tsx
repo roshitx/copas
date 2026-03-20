@@ -4,6 +4,7 @@ const FOOTER_LINKS = [
     { href: "/faq", label: "FAQ" },
     { href: "/about", label: "Tentang" },
     { href: "/privacy", label: "Kebijakan Privasi" },
+    { href: "/terms", label: "Syarat Penggunaan" },
     { href: "/copyright", label: "Hak Cipta & DMCA" },
 ] as const;
 

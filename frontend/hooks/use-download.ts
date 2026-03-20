@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useRef, useState } from 'react'
-import JSZip from 'jszip'
 import { useDownloadStore } from '@/store/download-store'
 import {
   extractMedia,
@@ -10,7 +9,6 @@ import {
   validateDownloadToken,
   ApiClientError,
 } from '@/lib/api'
-import { fireConfetti } from '@/lib/confetti'
 import { detectPlatform, isValidUrl } from '@/lib/platform-detector'
 import type { Format, MediaResult } from '@/types'
 
@@ -136,7 +134,7 @@ export function useDownload() {
 
       const url = resolveFormatUrl(selectedFormat)
       triggerBrowserDownload(url, filename)
-      fireConfetti()
+      import('@/lib/confetti').then((m) => m.fireConfetti())
     } catch (err) {
       store.setDownloadStatus('error')
 
@@ -185,6 +183,7 @@ export function useDownload() {
     let completedCount = 0
 
     try {
+      const JSZip = (await import('jszip')).default
       const zip = new JSZip()
       const folderName = buildFilename(result.platform, result.author, 0, 'zip').replace('.zip', '')
       const folder = zip.folder(folderName)!
@@ -248,7 +247,7 @@ export function useDownload() {
 
       const zipFilename = `${folderName}.zip`
       triggerBrowserDownload(URL.createObjectURL(zipBlob), zipFilename)
-      fireConfetti()
+      import('@/lib/confetti').then((m) => m.fireConfetti())
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') {
         // Download was cancelled - don't show error

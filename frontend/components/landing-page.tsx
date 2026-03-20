@@ -1,25 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useDownload } from "@/hooks/use-download";
 import { UrlInput } from "@/components/url-input";
-import { ResultCard } from "@/components/result-card";
 import { SkeletonResult } from "@/components/skeleton-result";
 import { PlatformIcon } from "@/components/platform-icon";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SiteFooter } from "@/components/site-footer";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { ErrorCard } from "@/components/error-card";
-import type { Platform } from "@/types";
+import { SUPPORTED_PLATFORMS } from "@/lib/constants";
 
-const PLATFORMS: Platform[] = [
-    "tiktok",
-    "instagram",
-    "youtube",
-    "twitter",
-    "facebook",
-    "threads",
-];
+const ResultCard = dynamic(
+    () =>
+        import("@/components/result-card").then((m) => ({
+            default: m.ResultCard,
+        })),
+    { ssr: false, loading: () => <SkeletonResult /> },
+);
 
 export function LandingPage() {
     const { status, result, error, platform, errorCode, processUrl, reset } = useDownload();
@@ -83,7 +82,7 @@ export function LandingPage() {
 
                     <div className="mt-5 flex items-center gap-3 justify-center">
                         <span className="text-xs text-muted-foreground">Mendukung</span>
-                        {PLATFORMS.map((platform) => (
+                        {SUPPORTED_PLATFORMS.map((platform) => (
                             <PlatformIcon
                                 key={platform}
                                 platform={platform}

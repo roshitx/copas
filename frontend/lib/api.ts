@@ -1,4 +1,6 @@
 import type { ExtractRequest, MediaResult, ApiError } from '@/types'
+import { API_ROUTES } from '@/lib/api-routes'
+import { REQUEST_TIMEOUT_MS } from '@/lib/constants'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8000'
 
@@ -59,10 +61,10 @@ async function handleResponse<T>(res: Response): Promise<T> {
 
 export async function extractMedia(request: ExtractRequest): Promise<MediaResult> {
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 30_000)
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/extract`, {
+    const res = await fetch(`${BACKEND_URL}${API_ROUTES.extract}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
@@ -83,12 +85,12 @@ export function toBackendUrl(path: string): string {
 }
 
 export function getDownloadUrl(token: string): string {
-  return toBackendUrl(`/api/download?token=${encodeURIComponent(token)}`)
+  return toBackendUrl(`${API_ROUTES.download}?token=${encodeURIComponent(token)}`)
 }
 
 export async function validateDownloadToken(token: string): Promise<void> {
   const res = await fetch(
-    toBackendUrl(`/api/download/validate?token=${encodeURIComponent(token)}`),
+    toBackendUrl(`${API_ROUTES.downloadValidate}?token=${encodeURIComponent(token)}`),
     { method: 'GET' }
   )
 
