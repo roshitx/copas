@@ -7,6 +7,7 @@ import { ResultCard } from "@/components/result-card";
 import { SkeletonResult } from "@/components/skeleton-result";
 import { PlatformIcon } from "@/components/platform-icon";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { SiteFooter } from "@/components/site-footer";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { ErrorCard } from "@/components/error-card";
 import type { Platform } from "@/types";
@@ -37,15 +38,21 @@ export function LandingPage() {
                     <span className="text-base font-bold tracking-tight text-foreground">
                         Copas<span className="text-amber-500">.io</span>
                     </span>
-                    <div className="flex items-center gap-3">
+                    <nav className="flex items-center gap-4">
                         <Link
                             href="/faq"
                             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                         >
                             FAQ
                         </Link>
+                        <Link
+                            href="/about"
+                            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            Tentang
+                        </Link>
                         <ThemeToggle />
-                    </div>
+                    </nav>
                 </div>
             </header>
 
@@ -59,7 +66,7 @@ export function LandingPage() {
                     </h1>
                     <p className="text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
                         Copas link dari TikTok, Instagram, YouTube, X, Facebook,
-                        atau Threads — kami urus sisanya.
+                        atau Threads. Sisanya kami yang urus.
                     </p>
                 </div>
 
@@ -102,10 +109,7 @@ export function LandingPage() {
                 </div>
             </main>
 
-            <footer className="border-t border-border py-5 text-center text-xs text-muted-foreground">
-                Copas.io — Hanya untuk penggunaan pribadi. Hormati hak cipta
-                konten kreator.
-            </footer>
+            <SiteFooter />
         </div>
     );
 }
