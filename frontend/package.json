@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "test:e2e": "playwright test",
-    "test:e2e:headed": "playwright test --headed"
+    "test:e2e:headed": "playwright test --headed",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
@@ -28,6 +29,7 @@
     "simple-icons": "^16.9.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.2.0",
     "@playwright/test": "^1.41.0",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20",
