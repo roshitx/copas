@@ -3,7 +3,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 from app.schemas.extract import ExtractRequest, MediaResult
-from app.services.extractor import extract_media_info
+from app.services.extractors import extract_media_info
 from app.services.tiktok_extractor import TikWMError, TikWMUnavailableError, TikWMContentError
 
 limiter = Limiter(key_func=get_remote_address)

@@ -27,6 +27,7 @@ import asyncio
 from app.schemas.extract import MediaResult, Format
 from app.utils.facebook_scope import ErrorClass, classify_extraction_error
 import app.services.token_store as _token_store_module
+from app.services.extractors.base import build_filename
 
 
 # Configure logger
@@ -487,11 +488,7 @@ async def _build_formats(data: dict, author: Optional[str]) -> list[Format]:
     # Video format
     video_url = data.get("video_url")
     if video_url:
-        filename_parts = ["facebook"]
-        if author:
-            filename_parts.append(author.replace(" ", "_"))
-        filename_parts.append("copas_io.mp4")
-        filename = "_".join(filename_parts)
+        filename = build_filename("facebook", author, ext="mp4")
 
         token = await _token_store_module.token_store.create_token(
             download_url=video_url, filename=filename, content_type="video/mp4"
@@ -514,11 +511,7 @@ async def _build_formats(data: dict, author: Optional[str]) -> list[Format]:
     # Audio format (optional)
     audio_url = data.get("audio_url")
     if audio_url:
-        filename_parts = ["facebook"]
-        if author:
-            filename_parts.append(author.replace(" ", "_"))
-        filename_parts.append("copas_io.mp3")
-        filename = "_".join(filename_parts)
+        filename = build_filename("facebook", author, ext="mp3")
 
         token = await _token_store_module.token_store.create_token(
             download_url=audio_url, filename=filename, content_type="audio/mp3"

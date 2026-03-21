@@ -147,16 +147,16 @@ export function useDownload() {
       store.setDownloadStatus('error')
 
       if (err instanceof ApiClientError) {
-        console.error('Download validation failed:', err)
+        store.setError(err.message, err.code)
         return
       }
 
       if (err instanceof Error) {
-        console.error('Download failed:', err.message)
+        store.setError(err.message)
         return
       }
 
-      console.error('Download failed with unknown error:', err)
+      store.setError('Gagal mendownload file. Coba lagi nanti.')
     }
   }, [store])
 

@@ -18,6 +18,7 @@ from .routers import extract, download
 from .services.redis_client import get_redis, close_redis
 from .services.token_store import token_store, start_cleanup_task
 from .services.cache import extraction_cache
+from .services.http_client import close_http_client
 from .core.logging_config import setup_logging
 
 # Logger for startup/security configuration warnings
@@ -108,13 +109,14 @@ async def lifespan(_app: FastAPI):
 
     yield
 
-    # Shutdown: cancel cleanup task and close Redis
+    # Shutdown: cancel cleanup task, close HTTP client, close Redis
     _ = cleanup_task.cancel()
     try:
         await cleanup_task
     except asyncio.CancelledError:
         pass
 
+    await close_http_client()
     await close_redis()
 
 
@@ -148,8 +150,19 @@ app.include_router(download.router)
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint."""
-    return {"status": "ok"}
+    """Health check endpoint with Redis connectivity."""
+    redis_ok = False
+    if extraction_cache._redis:
+        try:
+            await extraction_cache._redis.ping()
+            redis_ok = True
+        except Exception:
+            pass
+
+    return {
+        "status": "ok",
+        "redis": "connected" if redis_ok else "unavailable",
+    }
 
 
 if __name__ == "__main__":

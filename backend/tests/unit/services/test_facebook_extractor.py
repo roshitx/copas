@@ -7,7 +7,8 @@ Tests the hybrid path: primary yt-dlp → fallback if allowed.
 from unittest.mock import patch, AsyncMock, MagicMock
 import pytest
 
-from app.services.extractor import extract_media_info, _extract_facebook_hybrid
+from app.services.extractors import extract_media_info
+from app.services.extractors.facebook import extract_facebook_media as _extract_facebook_hybrid
 from app.utils.facebook_scope import ErrorClass
 from app.schemas.extract import MediaResult, Format
 
@@ -61,9 +62,9 @@ class TestFacebookHybridExtraction:
     ):
         """Successful primary extraction returns MediaResult."""
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_extract,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_extract,
             patch(
-                "app.services.extractor._build_facebook_media_result",
+                "app.services.extractors.facebook._build_media_result",
                 new_callable=AsyncMock,
             ) as mock_build,
         ):
@@ -83,8 +84,8 @@ class TestFacebookHybridExtraction:
     ):
         """TERMINAL_ACCESS error raises PermissionError (403 ACCESS_DENIED)."""
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_extract,
-            patch("app.services.extractor.classify_extraction_error") as mock_classify,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_extract,
+            patch("app.services.extractors.facebook.classify_extraction_error") as mock_classify,
         ):
             mock_extract.side_effect = PermissionError("Login required")
             mock_classify.return_value = ErrorClass.TERMINAL_ACCESS
@@ -100,10 +101,10 @@ class TestFacebookHybridExtraction:
     ):
         """NO_FALLBACK error raises original error without fallback attempt."""
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_extract,
-            patch("app.services.extractor.classify_extraction_error") as mock_classify,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_extract,
+            patch("app.services.extractors.facebook.classify_extraction_error") as mock_classify,
             patch(
-                "app.services.extractor.extract_facebook_via_fallback"
+                "app.services.extractors.facebook.extract_facebook_via_fallback"
             ) as mock_fallback,
         ):
             original_error = ValueError("Invalid URL format")
@@ -121,10 +122,10 @@ class TestFacebookHybridExtraction:
     ):
         """ALLOW_FALLBACK triggers fallback and returns result on success."""
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_extract,
-            patch("app.services.extractor.classify_extraction_error") as mock_classify,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_extract,
+            patch("app.services.extractors.facebook.classify_extraction_error") as mock_classify,
             patch(
-                "app.services.extractor.extract_facebook_via_fallback",
+                "app.services.extractors.facebook.extract_facebook_via_fallback",
                 new_callable=AsyncMock,
             ) as mock_fallback,
         ):
@@ -141,10 +142,10 @@ class TestFacebookHybridExtraction:
     async def test_dual_failure_raises_runtime_error(self, valid_facebook_url):
         """Both primary and fallback failure raises RuntimeError (422 EXTRACTION_FAILED)."""
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_extract,
-            patch("app.services.extractor.classify_extraction_error") as mock_classify,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_extract,
+            patch("app.services.extractors.facebook.classify_extraction_error") as mock_classify,
             patch(
-                "app.services.extractor.extract_facebook_via_fallback",
+                "app.services.extractors.facebook.extract_facebook_via_fallback",
                 new_callable=AsyncMock,
             ) as mock_fallback,
         ):
@@ -166,7 +167,7 @@ class TestFacebookHybridExtraction:
             mock_ydl_class.return_value.__exit__ = MagicMock(return_value=False)
             mock_ydl.extract_info.return_value = {"title": "Test"}
 
-            from app.services.extractor import _extract_info_sync_facebook
+            from app.services.extractors.facebook import _extract_info_sync_facebook
 
             _extract_info_sync_facebook(valid_facebook_url)
 
@@ -186,7 +187,7 @@ class TestFacebookPlatformRouting:
         facebook_url = "https://facebook.com/watch?v=123"
 
         with patch(
-            "app.services.extractor._extract_facebook_hybrid",
+            "app.services.extractors.extract_facebook_media",
             new_callable=AsyncMock,
         ) as mock_hybrid:
             mock_hybrid.return_value = MediaResult(
@@ -210,12 +211,12 @@ class TestFacebookPlatformRouting:
 
         with (
             patch(
-                "app.services.extractor._extract_facebook_hybrid",
+                "app.services.extractors.extract_facebook_media",
                 new_callable=AsyncMock,
             ) as mock_hybrid,
-            patch("app.services.extractor._extract_info_sync") as mock_sync,
+            patch("app.services.extractors.base.extract_info_sync") as mock_sync,
             patch(
-                "app.services.extractor._build_formats",
+                "app.services.extractors.base.build_formats",
                 new_callable=AsyncMock,
             ) as mock_build,
         ):

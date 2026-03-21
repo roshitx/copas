@@ -27,27 +27,28 @@ def _build_content_disposition(filename: str) -> str:
     )
 
 
+def _build_headers(target_url: str) -> dict[str, str]:
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        ),
+    }
+    if "twimg.com" in target_url or "twitter.com" in target_url:
+        headers["Referer"] = "https://twitter.com/"
+    elif "cdninstagram.com" in target_url or "fbcdn.net" in target_url:
+        headers["Referer"] = "https://www.instagram.com/"
+    elif "tiktokcdn" in target_url or "tiktok.com" in target_url:
+        headers["Referer"] = "https://www.tiktok.com/"
+    return headers
+
+
 async def stream_media(url: str, filename: str, content_type: str) -> StreamingResponse:
     validate_public_url(url)
 
-    # Determine appropriate headers based on the CDN being accessed
-    def _build_headers(target_url: str) -> dict[str, str]:
-        headers = {
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/120.0.0.0 Safari/537.36"
-            ),
-        }
-        if "twimg.com" in target_url or "twitter.com" in target_url:
-            headers["Referer"] = "https://twitter.com/"
-        elif "cdninstagram.com" in target_url or "fbcdn.net" in target_url:
-            headers["Referer"] = "https://www.instagram.com/"
-        elif "tiktokcdn" in target_url or "tiktok.com" in target_url:
-            headers["Referer"] = "https://www.tiktok.com/"
-        return headers
-
     async def generate() -> AsyncGenerator[bytes, None]:
+        # Streaming requires a dedicated client (can't use shared pool for long-lived streams)
         async with httpx.AsyncClient(follow_redirects=True, timeout=60.0) as client:
             async with client.stream(
                 "GET", url, headers=_build_headers(url)
