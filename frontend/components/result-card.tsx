@@ -3,12 +3,14 @@
 import { useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { Film, Download } from 'lucide-react'
-import { motion, useMotionValue, useTransform, animate, useReducedMotion } from 'framer-motion'
+import { LazyMotion, m as MotionDiv, useMotionValue, useTransform, animate, useReducedMotion } from 'framer-motion'
 import { useDrag } from '@use-gesture/react'
 import type { MediaResult } from '@/types'
 import { PlatformBadge } from '@/components/platform-badge'
 import { FormatList } from '@/components/format-list'
 import { FormatSheet } from '@/components/format-sheet'
+
+const loadFramerFeatures = () => import('framer-motion').then((mod) => mod.domAnimation)
 
 
 function formatDuration(seconds: number | null): string | null {
@@ -42,7 +44,6 @@ function ThumbnailGrid({ thumbnails, title }: ThumbnailGridProps) {
         alt={title || 'Thumbnail'}
         fill
         className="object-cover"
-        unoptimized
         onError={() => setFailed(true)}
       />
     )
@@ -52,7 +53,7 @@ function ThumbnailGrid({ thumbnails, title }: ThumbnailGridProps) {
       <div className="absolute inset-0 flex gap-0.5">
         {thumbnails.map((src, i) => (
           <div key={'double-' + src} className="relative flex-1">
-            <Image src={src} alt={title + ' ' + (i + 1)} fill className="object-cover" unoptimized />
+            <Image src={src} alt={title + ' ' + (i + 1)} fill className="object-cover" />
           </div>
         ))}
       </div>
@@ -63,12 +64,12 @@ function ThumbnailGrid({ thumbnails, title }: ThumbnailGridProps) {
     return (
       <div className="absolute inset-0 flex gap-0.5">
         <div className="relative flex-1">
-          <Image src={thumbnails[0]} alt={title + ' 1'} fill className="object-cover" unoptimized />
+          <Image src={thumbnails[0]} alt={title + ' 1'} fill className="object-cover" />
         </div>
         <div className="flex-1 flex flex-col gap-0.5">
           {thumbnails.slice(1).map((src, i) => (
             <div key={'triple-' + src} className="relative flex-1">
-              <Image src={src} alt={title + ' ' + (i + 2)} fill className="object-cover" unoptimized />
+              <Image src={src} alt={title + ' ' + (i + 2)} fill className="object-cover" />
             </div>
           ))}
         </div>
@@ -82,7 +83,7 @@ function ThumbnailGrid({ thumbnails, title }: ThumbnailGridProps) {
     <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5">
       {show.map((src, i) => (
         <div key={'grid-' + src} className="relative">
-          <Image src={src} alt={title + ' ' + (i + 1)} fill className="object-cover" unoptimized />
+          <Image src={src} alt={title + ' ' + (i + 1)} fill className="object-cover" />
           {i === 3 && overflow > 0 && (
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
               <span className="text-white font-black text-xl">+{overflow}</span>
@@ -174,21 +175,22 @@ export function ResultCard({ result, onDismiss, onFocusReturn }: ResultCardProps
   )
 
   return (
-    <div className="relative overflow-hidden">
-      <div className="sr-only" aria-live="polite" aria-atomic="true">
-        {srAnnouncement}
-      </div>
+    <LazyMotion features={loadFramerFeatures} strict>
       <div className="relative overflow-hidden">
-        <motion.div
-          ref={cardRef}
-          data-testid="result-card"
-          role="button"
-          aria-label="Hasil download. Tekan Delete untuk menutup"
-          tabIndex={0}
-          onKeyDown={handleKeyDown}
-          style={{ x, scale, opacity }}
-          className="w-full rounded-2xl overflow-hidden border border-zinc-800/50 bg-zinc-950 animate-fade-up cursor-grab touch-pan-y active:cursor-grabbing outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-        >
+        <div className="sr-only" aria-live="polite" aria-atomic="true">
+          {srAnnouncement}
+        </div>
+        <div className="relative overflow-hidden">
+          <MotionDiv.div
+            ref={cardRef}
+            data-testid="result-card"
+            role="button"
+            aria-label="Hasil download. Tekan Delete untuk menutup"
+            tabIndex={0}
+            onKeyDown={handleKeyDown}
+            style={{ x, scale, opacity }}
+            className="w-full rounded-2xl overflow-hidden border border-zinc-800/50 bg-zinc-950 animate-fade-up cursor-grab touch-pan-y active:cursor-grabbing outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+          >
           <div className="relative aspect-video bg-zinc-900">
             <ThumbnailGrid thumbnails={thumbnails} title={result.title} />
 
@@ -234,8 +236,9 @@ export function ResultCard({ result, onDismiss, onFocusReturn }: ResultCardProps
           </div>
 
           <FormatSheet result={result} open={sheetOpen} onOpenChange={setSheetOpen} />
-        </motion.div>
+          </MotionDiv.div>
+        </div>
       </div>
-    </div>
+    </LazyMotion>
   )
 }
