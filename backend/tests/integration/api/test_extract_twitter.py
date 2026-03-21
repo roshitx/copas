@@ -160,7 +160,7 @@ class TestExtractTwitterSingleImage:
         expected = fixture["expected_backend_response"]
 
         # Mock yt-dlp to raise "no video could be found" for image-only tweets
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             # Mock fxtwitter API
@@ -205,7 +205,7 @@ class TestExtractTwitterSingleImage:
         """Test that download URLs are properly tokenized."""
         fixture = SINGLE_IMAGE_FIXTURE
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             fx_response = create_fxtwitter_response(fixture)
@@ -238,7 +238,7 @@ class TestExtractTwitterSingleVideo:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             # Mock fxtwitter (may return no photos for video tweets)
@@ -275,7 +275,7 @@ class TestExtractTwitterSingleVideo:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             with respx.mock:
@@ -302,7 +302,7 @@ class TestExtractTwitterMultiVideo:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=True)
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             with respx.mock:
@@ -333,7 +333,7 @@ class TestExtractTwitterMultiVideo:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=True)
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             with respx.mock:
@@ -358,7 +358,7 @@ class TestExtractTwitterMultiImage:
         fixture = MULTI_IMAGE_FIXTURE
         expected = fixture["expected_backend_response"]
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             fx_response = create_fxtwitter_response(fixture)
@@ -390,7 +390,7 @@ class TestExtractTwitterMultiImage:
         """Test that all images have tokenized download URLs."""
         fixture = MULTI_IMAGE_FIXTURE
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             fx_response = create_fxtwitter_response(fixture)
@@ -423,7 +423,7 @@ class TestExtractTwitterHybrid:
         # Create mock info with video
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             # Mock fxtwitter to return the image
@@ -458,7 +458,7 @@ class TestExtractTwitterHybrid:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             fx_response = create_fxtwitter_response(fixture)
@@ -551,7 +551,7 @@ class TestExtractResponseStructure:
         fixture = SINGLE_VIDEO_FIXTURE
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             with respx.mock:
@@ -579,7 +579,7 @@ class TestExtractResponseStructure:
         fixture = SINGLE_VIDEO_FIXTURE
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             with respx.mock:
@@ -605,7 +605,7 @@ class TestExtractResponseStructure:
         """Test that Twitter URLs are correctly detected."""
         fixture = SINGLE_IMAGE_FIXTURE
 
-        with patch("app.services.extractor._extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             fx_response = create_fxtwitter_response(fixture)

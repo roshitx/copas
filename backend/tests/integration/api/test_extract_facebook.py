@@ -121,7 +121,7 @@ class TestExtractFacebookHybridMatrix:
         mock_info = create_mock_facebook_info(fixture)
 
         with patch(
-            "app.services.extractor._extract_info_sync_facebook"
+            "app.services.extractors.facebook._extract_info_sync_facebook"
         ) as mock_primary:
             mock_primary.return_value = mock_info
 
@@ -150,10 +150,10 @@ class TestExtractFacebookHybridMatrix:
         fallback_result = await create_fallback_result_with_token(mock_token_store)
 
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_primary,
-            patch("app.services.extractor.classify_extraction_error") as mock_classify,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_primary,
+            patch("app.services.extractors.facebook.classify_extraction_error") as mock_classify,
             patch(
-                "app.services.extractor.extract_facebook_via_fallback",
+                "app.services.extractors.facebook.extract_facebook_via_fallback",
                 new_callable=AsyncMock,
             ) as mock_fallback,
         ):
@@ -183,10 +183,10 @@ class TestExtractFacebookHybridMatrix:
         fixture = WATCH_FIXTURE
 
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_primary,
-            patch("app.services.extractor.classify_extraction_error") as mock_classify,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_primary,
+            patch("app.services.extractors.facebook.classify_extraction_error") as mock_classify,
             patch(
-                "app.services.extractor.extract_facebook_via_fallback",
+                "app.services.extractors.facebook.extract_facebook_via_fallback",
                 new_callable=AsyncMock,
             ) as mock_fallback,
         ):
@@ -209,8 +209,8 @@ class TestExtractFacebookHybridMatrix:
         fixture = WATCH_FIXTURE
 
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_primary,
-            patch("app.services.extractor.classify_extraction_error") as mock_classify,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_primary,
+            patch("app.services.extractors.facebook.classify_extraction_error") as mock_classify,
         ):
             mock_primary.side_effect = PermissionError("Login required")
             mock_classify.return_value = ErrorClass.TERMINAL_ACCESS
@@ -228,10 +228,10 @@ class TestExtractFacebookHybridMatrix:
         fixture = WATCH_FIXTURE
 
         with (
-            patch("app.services.extractor._extract_info_sync_facebook") as mock_primary,
-            patch("app.services.extractor.classify_extraction_error") as mock_classify,
+            patch("app.services.extractors.facebook._extract_info_sync_facebook") as mock_primary,
+            patch("app.services.extractors.facebook.classify_extraction_error") as mock_classify,
             patch(
-                "app.services.extractor.extract_facebook_via_fallback",
+                "app.services.extractors.facebook.extract_facebook_via_fallback",
                 new_callable=AsyncMock,
             ) as mock_fallback,
         ):

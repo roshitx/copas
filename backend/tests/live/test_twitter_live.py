@@ -11,7 +11,7 @@ They should be run on a schedule or manual dispatch, NOT on every PR.
 """
 
 import pytest
-from app.services.extractor import extract_media_info
+from app.services.extractors import extract_media_info
 
 pytestmark = pytest.mark.live
 

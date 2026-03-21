@@ -8,10 +8,8 @@ from unittest.mock import patch, AsyncMock
 
 import pytest
 
-from app.services.extractor import (
-    _extract_tweet_id,
-    _create_format,
-)
+from app.services.extractors.twitter import _extract_tweet_id
+from app.services.extractors.base import create_format as _create_format
 from app.utils.platform import detect_platform
 
 
@@ -181,7 +179,7 @@ class TestCreateFormatFilename:
     @pytest.mark.asyncio
     async def test_filename_with_platform_and_author(self, mock_fmt):
         """Filename includes platform, author, and copas_io."""
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="test-token-123")
 
             result = await _create_format(
@@ -205,7 +203,7 @@ class TestCreateFormatFilename:
     @pytest.mark.asyncio
     async def test_filename_with_platform_only(self, mock_fmt):
         """Filename includes platform and copas_io when no author."""
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="test-token-456")
 
             await _create_format(
@@ -225,7 +223,7 @@ class TestCreateFormatFilename:
     @pytest.mark.asyncio
     async def test_filename_with_author_only(self, mock_fmt):
         """Filename includes author and copas_io when no platform."""
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="test-token-789")
 
             await _create_format(
@@ -244,7 +242,7 @@ class TestCreateFormatFilename:
     @pytest.mark.asyncio
     async def test_filename_with_neither_platform_nor_author(self, mock_fmt):
         """Filename defaults to copas_copas_io when no platform or author."""
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="test-token-abc")
 
             await _create_format(
@@ -263,7 +261,7 @@ class TestCreateFormatFilename:
     @pytest.mark.asyncio
     async def test_filename_with_index(self, mock_fmt):
         """Filename includes index when video_index > 0."""
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="test-token-def")
 
             await _create_format(
@@ -289,7 +287,7 @@ class TestCreateFormatFilename:
             "filesize": None,
         }
 
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="test-token-ghi")
 
             await _create_format(
@@ -314,7 +312,7 @@ class TestCreateFormatFilename:
             "filesize": None,
         }
 
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="test-token-jkl")
 
             await _create_format(
@@ -348,7 +346,7 @@ class TestCreateFormatResult:
     @pytest.mark.asyncio
     async def test_returns_format_object(self, mock_fmt):
         """_create_format returns a Format object with correct fields."""
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="token-abc-123")
 
             result = await _create_format(
@@ -376,7 +374,7 @@ class TestCreateFormatResult:
             "filesize": None,
         }
 
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="token")
 
             result = await _create_format(
@@ -400,7 +398,7 @@ class TestCreateFormatResult:
             "filesize": None,
         }
 
-        with patch("app.services.extractor._token_store_module.token_store") as mock_store:
+        with patch("app.services.extractors.base._token_store_module.token_store") as mock_store:
             mock_store.create_token = AsyncMock(return_value="token")
 
             result = await _create_format(

@@ -24,13 +24,15 @@ def mock_token_store(monkeypatch):
     fresh_store._redis = None  # Force in-memory mode for tests
     monkeypatch.setattr("app.routers.download.token_store", fresh_store)
     monkeypatch.setattr("app.services.token_store.token_store", fresh_store)
-    # Patch the token_store in extractor module (accessed via _token_store_module)
+    # Patch the token_store in extractor modules (accessed via _token_store_module)
     monkeypatch.setattr(
-        "app.services.extractor._token_store_module.token_store", fresh_store
+        "app.services.extractors.base._token_store_module.token_store", fresh_store
     )
-    # NEW: Add for tiktok_extractor
     monkeypatch.setattr(
         "app.services.tiktok_extractor._token_store_module.token_store", fresh_store
+    )
+    monkeypatch.setattr(
+        "app.services.facebook_fallback._token_store_module.token_store", fresh_store
     )
     return fresh_store
 
@@ -38,10 +40,11 @@ def mock_token_store(monkeypatch):
 @pytest.fixture(autouse=True)
 def reset_rate_limiter():
     """Reset rate limiter state before each test to prevent 429 errors."""
-    from app.routers.extract import limiter
+    from app.routers.extract import limiter as extract_limiter
+    from app.routers.download import limiter as download_limiter
 
-    # Clear any existing rate limit storage
-    limiter.reset()
+    extract_limiter.reset()
+    download_limiter.reset()
     yield
 
 

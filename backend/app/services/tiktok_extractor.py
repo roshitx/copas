@@ -5,6 +5,8 @@ import httpx
 from app.schemas.extract import MediaResult, Format
 import app.services.token_store as _token_store_module
 from app.services.retry import with_retry
+from app.services.http_client import get_http_client
+from app.services.extractors.base import build_filename
 
 
 class TikWMError(Exception):
@@ -37,27 +39,27 @@ async def extract_tiktok_media(url: str) -> MediaResult:
 async def _fetch_tikwm_data(url: str) -> dict:
     """Fetch data from TikWM API."""
     try:
-        async with httpx.AsyncClient(timeout=20.0) as client:
-            response = await client.post(
-                TIKWM_API_URL,
-                data={"url": url},
-                headers={"User-Agent": "Mozilla/5.0 (compatible; CopasBot/1.0)"},
+        client = get_http_client()
+        response = await client.post(
+            TIKWM_API_URL,
+            data={"url": url},
+            headers={"User-Agent": "Mozilla/5.0 (compatible; CopasBot/1.0)"},
+        )
+
+        if response.status_code != 200:
+            raise TikWMUnavailableError(
+                "Layanan TikTok sedang tidak tersedia. Coba lagi nanti."
             )
 
-            if response.status_code != 200:
-                raise TikWMUnavailableError(
-                    "Layanan TikTok sedang tidak tersedia. Coba lagi nanti."
-                )
+        result = response.json()
 
-            result = response.json()
+        if result.get("code") != 0 or not result.get("data"):
+            raise TikWMContentError(
+                "Konten TikTok tidak ditemukan atau bersifat pribadi. "
+                "Pastikan link dapat diakses publik."
+            )
 
-            if result.get("code") != 0 or not result.get("data"):
-                raise TikWMContentError(
-                    "Konten TikTok tidak ditemukan atau bersifat pribadi. "
-                    "Pastikan link dapat diakses publik."
-                )
-
-            return result["data"]
+        return result["data"]
 
     except httpx.TimeoutException:
         raise TikWMUnavailableError("Layanan TikTok tidak merespons. Coba lagi nanti.")
@@ -109,12 +111,7 @@ async def _build_video_formats(data: dict, author: Optional[str]) -> list[Format
     if not play_url:
         return []
 
-    # Create download token
-    filename_parts = ["tiktok"]
-    if author:
-        filename_parts.append(author)
-    filename_parts.append("copas_io.mp4")
-    filename = "_".join(filename_parts)
+    filename = build_filename("tiktok", author, ext="mp4")
 
     token = await _token_store_module.token_store.create_token(
         download_url=play_url, filename=filename, content_type="video/mp4"
@@ -143,13 +140,7 @@ async def _build_photo_formats(data: dict, author: Optional[str]) -> list[Format
 
     formats = []
     for i, img_url in enumerate(images, start=1):
-        filename_parts = ["tiktok"]
-        if author:
-            filename_parts.append(author)
-        filename_parts.append("copas_io")
-        if len(images) > 1:
-            filename_parts.append(str(i))
-        filename = "_".join(filename_parts) + ".jpg"
+        filename = build_filename("tiktok", author, index=i if len(images) > 1 else 0, ext="jpg")
 
         token = await _token_store_module.token_store.create_token(
             download_url=img_url, filename=filename, content_type="image/jpeg"
