@@ -4,7 +4,7 @@
   "expected_frontend_state": {
     "platform": "instagram",
     "author": "jaykaktus",
-    "title": null,
+    "title": "",
     "formats": [
       {
         "id": "reel-720",
@@ -14,9 +14,9 @@
         "downloadUrl": "/api/download?token=mock_token_reel_video"
       }
     ],
-    "thumbnail": "https://instagram.com/reel_thumbnail_1.jpg",
+    "thumbnail": "https://scontent.cdninstagram.com/reel_thumbnail_1.jpg",
     "thumbnails": [
-      "https://instagram.com/reel_thumbnail_1.jpg"
+      "https://scontent.cdninstagram.com/reel_thumbnail_1.jpg"
     ],
     "duration": 25
   },

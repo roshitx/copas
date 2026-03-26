@@ -15,12 +15,12 @@ from app.services.extractors import extract_media_info
 
 pytestmark = pytest.mark.live
 
-# Canonical Twitter URLs for live testing (from tests/shared/twitter-scenarios.json)
+# Canonical Twitter URLs for live testing (from docs/source-test-plan.md)
 CANONICAL_URLS = {
-    "single_image": "https://x.com/rwhendry/status/2027767749695705372?s=20",
-    "single_video": "https://x.com/sosmedkeras/status/2027955413753417803?s=20",
+    "single_image": "https://x.com/idextratime/status/2035091102118945230?s=20",
+    "single_video": "https://x.com/MiskinTV_/status/2035232515414458778?s=20",
     "multi_video": "https://x.com/mikuroQ/status/2027735620534358393?s=20",
-    "multi_image": "https://x.com/IndonesiaGaruda/status/2027914018976108959?s=20",
+    "multi_image": "https://x.com/ns123abc/status/2035058399067435474?s=20",
     "hybrid": "https://x.com/Villgecrazylady/status/2027532953966825726?s=20",
 }
 

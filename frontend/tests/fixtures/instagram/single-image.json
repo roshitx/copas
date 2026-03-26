@@ -4,7 +4,7 @@
   "expected_frontend_state": {
     "platform": "instagram",
     "author": "photographer_name",
-    "title": null,
+    "title": "",
     "formats": [
       {
         "id": "img-1",
@@ -14,9 +14,9 @@
         "downloadUrl": "/api/download?token=mock_token_single_image"
       }
     ],
-    "thumbnail": "https://instagram.com/media/single_image.jpg",
+    "thumbnail": "https://scontent.cdninstagram.com/media/single_image.jpg",
     "thumbnails": [
-      "https://instagram.com/media/single_image.jpg"
+      "https://scontent.cdninstagram.com/media/single_image.jpg"
     ],
     "duration": null
   },

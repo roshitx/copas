@@ -1,0 +1,23 @@
+{
+  "scenario_id": "youtube-shorts",
+  "input_url": "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+  "expected_frontend_state": {
+    "platform": "youtube",
+    "author": "ShortsCreator",
+    "title": "Test YouTube Shorts",
+    "formats": [
+      {
+        "id": "18",
+        "label": "Video 360p",
+        "type": "video/mp4",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_shorts_360"
+      }
+    ],
+    "thumbnail": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    "thumbnails": [
+      "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
+    ],
+    "duration": 30
+  }
+}

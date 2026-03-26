@@ -1,0 +1,63 @@
+{
+  "description": "Instagram Post - multi-video carousel (2 videos)",
+  "url": "https://www.instagram.com/p/DVXiyNHE78b/",
+  "mock_ytdlp_response": {
+    "id": "DVXiyNHE78b",
+    "title": "Multi video carousel",
+    "uploader": "videocreator",
+    "uploader_id": "videocreator",
+    "duration": 45,
+    "thumbnail": "https://scontent.cdninstagram.com/video1_thumb.jpg",
+    "thumbnails": [
+      {"url": "https://scontent.cdninstagram.com/video1_thumb.jpg"},
+      {"url": "https://scontent.cdninstagram.com/video2_thumb.jpg"}
+    ],
+    "formats": [
+      {
+        "format_id": "0",
+        "url": "https://scontent.cdninstagram.com/video1.mp4",
+        "ext": "mp4",
+        "vcodec": "avc1",
+        "acodec": "mp4a",
+        "height": 1080,
+        "width": 608,
+        "filesize": 8500000
+      },
+      {
+        "format_id": "1",
+        "url": "https://scontent.cdninstagram.com/video2.mp4",
+        "ext": "mp4",
+        "vcodec": "avc1",
+        "acodec": "mp4a",
+        "height": 1080,
+        "width": 608,
+        "filesize": 7200000
+      }
+    ]
+  },
+  "expected_backend_response": {
+    "platform": "instagram",
+    "title": "Multi video carousel",
+    "author": "videocreator",
+    "duration": 45,
+    "thumbnail": "https://scontent.cdninstagram.com/video1_thumb.jpg",
+    "thumbnails": [
+      "https://scontent.cdninstagram.com/video1_thumb.jpg",
+      "https://scontent.cdninstagram.com/video2_thumb.jpg"
+    ],
+    "formats": [
+      {
+        "id": "instagram-video-0",
+        "label": "Video 1",
+        "type": "video/mp4",
+        "size_mb": 8.11
+      },
+      {
+        "id": "instagram-video-1",
+        "label": "Video 2",
+        "type": "video/mp4",
+        "size_mb": 6.87
+      }
+    ]
+  }
+}

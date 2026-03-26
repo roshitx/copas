@@ -1,12 +1,12 @@
-#VS|fastapi==0.115.0
-#RM|uvicorn[standard]==0.30.6
-#BH|yt-dlp>=2026.2.21
-#VW|httpx==0.27.2
-#SQ|slowapi==0.1.9
-#KW|python-multipart==0.0.12
-#YX|pydantic==2.9.2
-#QS|pydantic-settings==2.5.2
-#FB|curl_cffi>=0.7.0  # Required for yt-dlp browser impersonation (Facebook extraction)
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+yt-dlp>=2026.2.21
+httpx==0.27.2
+slowapi==0.1.9
+python-multipart==0.0.12
+pydantic==2.9.2
+pydantic-settings==2.5.2
+curl_cffi>=0.7.0
 redis[hiredis]>=5.0.0
 tenacity>=8.2.0
 sentry-sdk[fastapi]>=2.0.0
