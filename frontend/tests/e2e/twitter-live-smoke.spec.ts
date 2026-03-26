@@ -17,12 +17,12 @@ import * as path from 'path'
 // Screenshots directory for failure artifacts (relative to frontend/)
 const SCREENSHOTS_DIR = 'test-results/live-smoke'
 
-// Canonical Twitter URLs for live testing (without query parameters)
+// Canonical Twitter URLs for live testing (from docs/source-test-plan.md)
 const CANONICAL_URLS = {
-  singleImage: 'https://x.com/rwhendry/status/2027767749695705372',
-  singleVideo: 'https://x.com/sosmedkeras/status/2027955413753417803',
+  singleImage: 'https://x.com/idextratime/status/2035091102118945230',
+  singleVideo: 'https://x.com/MiskinTV_/status/2035232515414458778',
   multiVideo: 'https://x.com/mikuroQ/status/2027735620534358393',
-  multiImage: 'https://x.com/IndonesiaGaruda/status/2027914018976108959',
+  multiImage: 'https://x.com/ns123abc/status/2035058399067435474',
   hybrid: 'https://x.com/Villgecrazylady/status/2027532953966825726',
 }
 

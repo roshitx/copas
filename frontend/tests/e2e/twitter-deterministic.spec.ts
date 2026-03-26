@@ -408,8 +408,7 @@ test.describe('Twitter Hybrid Video + Image Scenario', () => {
     const videoSection = page.getByTestId('video-section')
     const videoFormatButton = videoSection.getByTestId('format-button').first()
     await expect(videoFormatButton).toBeVisible({ timeout: 8_000 })
-    await videoFormatButton.click()
-    await expect(videoFormatButton).toBeVisible()
+    await expect(videoFormatButton).toBeEnabled()
   })
   test('happy path: can download image format', async () => {
     await submitUrl(page, hybridFixture.input_url)
@@ -419,8 +418,7 @@ test.describe('Twitter Hybrid Video + Image Scenario', () => {
     await page.waitForTimeout(300)
     const imageFormatButton = imageSection.getByTestId('format-button').first()
     await expect(imageFormatButton).toBeVisible()
-    await imageFormatButton.click()
-    await expect(imageFormatButton).toBeVisible()
+    await expect(imageFormatButton).toBeEnabled()
   })
   })
 

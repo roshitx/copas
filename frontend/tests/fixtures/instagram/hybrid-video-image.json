@@ -4,7 +4,7 @@
   "expected_frontend_state": {
     "platform": "instagram",
     "author": "content_creator",
-    "title": null,
+    "title": "",
     "formats": [
       {
         "id": "video-1",
@@ -21,10 +21,10 @@
         "downloadUrl": "/api/download?token=mock_token_hybrid_image"
       }
     ],
-    "thumbnail": "https://instagram.com/media/hybrid_video_thumb.jpg",
+    "thumbnail": "https://scontent.cdninstagram.com/media/hybrid_video_thumb.jpg",
     "thumbnails": [
-      "https://instagram.com/media/hybrid_video_thumb.jpg",
-      "https://instagram.com/media/hybrid_image.jpg"
+      "https://scontent.cdninstagram.com/media/hybrid_video_thumb.jpg",
+      "https://scontent.cdninstagram.com/media/hybrid_image.jpg"
     ],
     "duration": 42
   },

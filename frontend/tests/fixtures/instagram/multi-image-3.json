@@ -4,7 +4,7 @@
   "expected_frontend_state": {
     "platform": "instagram",
     "author": "travel_blog",
-    "title": null,
+    "title": "",
     "formats": [
       {
         "id": "img-1",
@@ -28,11 +28,11 @@
         "downloadUrl": "/api/download?token=mock_token_carousel_3"
       }
     ],
-    "thumbnail": "https://instagram.com/media/carousel1.jpg",
+    "thumbnail": "https://scontent.cdninstagram.com/media/carousel1.jpg",
     "thumbnails": [
-      "https://instagram.com/media/carousel1.jpg",
-      "https://instagram.com/media/carousel2.jpg",
-      "https://instagram.com/media/carousel3.jpg"
+      "https://scontent.cdninstagram.com/media/carousel1.jpg",
+      "https://scontent.cdninstagram.com/media/carousel2.jpg",
+      "https://scontent.cdninstagram.com/media/carousel3.jpg"
     ],
     "duration": null
   },

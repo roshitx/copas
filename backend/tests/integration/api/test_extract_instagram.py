@@ -32,6 +32,8 @@ def load_fixture(filename: str) -> dict:
 REEL_FIXTURE = load_fixture("reel.json")
 POST_IMAGE_FIXTURE = load_fixture("post-image.json")
 POST_VIDEO_FIXTURE = load_fixture("post-video.json")
+MULTI_IMAGE_FIXTURE = load_fixture("multi-image.json")
+MULTI_VIDEO_FIXTURE = load_fixture("multi-video.json")
 
 
 def create_expected_media_result(fixture: dict) -> MediaResult:
@@ -199,6 +201,109 @@ class TestInstagramPostExtraction:
             assert "id" in fmt
             assert "label" in fmt
             assert "download_url" in fmt
+
+
+class TestInstagramMultiImageExtraction:
+    """Test Instagram multi-image carousel extraction."""
+
+    async def test_multi_image_returns_multiple_image_formats(self, client, mock_token_store):
+        """Test that multi-image carousel returns ≥2 image formats."""
+        fixture = MULTI_IMAGE_FIXTURE
+        expected = fixture["expected_backend_response"]
+        mock_result = create_expected_media_result(fixture)
+
+        with patch(
+            "app.routers.extract.extract_media_info", new_callable=AsyncMock
+        ) as mock_extract:
+            mock_extract.return_value = mock_result
+
+            response = client.post(
+                "/api/extract", json={"url": fixture["url"]}
+            )
+
+            assert response.status_code == 200
+            data = response.json()
+
+            assert data["platform"] == expected["platform"]
+            assert data["author"] == expected["author"]
+            assert data["duration"] is None
+
+            image_formats = [f for f in data["formats"] if "image" in f["type"]]
+            assert len(image_formats) >= 2
+
+            for fmt in image_formats:
+                assert "id" in fmt
+                assert "label" in fmt
+                assert "download_url" in fmt
+
+    async def test_multi_image_has_thumbnails(self, client, mock_token_store):
+        """Test that multi-image carousel returns thumbnails."""
+        fixture = MULTI_IMAGE_FIXTURE
+        mock_result = create_expected_media_result(fixture)
+
+        with patch(
+            "app.routers.extract.extract_media_info", new_callable=AsyncMock
+        ) as mock_extract:
+            mock_extract.return_value = mock_result
+
+            response = client.post(
+                "/api/extract", json={"url": fixture["url"]}
+            )
+            data = response.json()
+
+            assert data["thumbnail"] is not None
+            assert len(data["thumbnails"]) >= 1
+
+
+class TestInstagramMultiVideoExtraction:
+    """Test Instagram multi-video carousel extraction."""
+
+    async def test_multi_video_returns_multiple_video_formats(self, client, mock_token_store):
+        """Test that multi-video carousel returns ≥2 video formats."""
+        fixture = MULTI_VIDEO_FIXTURE
+        expected = fixture["expected_backend_response"]
+        mock_result = create_expected_media_result(fixture)
+
+        with patch(
+            "app.routers.extract.extract_media_info", new_callable=AsyncMock
+        ) as mock_extract:
+            mock_extract.return_value = mock_result
+
+            response = client.post(
+                "/api/extract", json={"url": fixture["url"]}
+            )
+
+            assert response.status_code == 200
+            data = response.json()
+
+            assert data["platform"] == expected["platform"]
+            assert data["author"] == expected["author"]
+
+            video_formats = [f for f in data["formats"] if "video" in f["type"]]
+            assert len(video_formats) >= 2
+
+            for fmt in video_formats:
+                assert "id" in fmt
+                assert "label" in fmt
+                assert "download_url" in fmt
+
+    async def test_multi_video_has_duration(self, client, mock_token_store):
+        """Test that multi-video carousel has duration."""
+        fixture = MULTI_VIDEO_FIXTURE
+        expected = fixture["expected_backend_response"]
+        mock_result = create_expected_media_result(fixture)
+
+        with patch(
+            "app.routers.extract.extract_media_info", new_callable=AsyncMock
+        ) as mock_extract:
+            mock_extract.return_value = mock_result
+
+            response = client.post(
+                "/api/extract", json={"url": fixture["url"]}
+            )
+            data = response.json()
+
+            assert data["duration"] == expected["duration"]
 
 
 class TestInstagramErrorHandling:

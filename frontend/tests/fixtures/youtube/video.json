@@ -1,0 +1,30 @@
+{
+  "scenario_id": "youtube-standard-video",
+  "input_url": "https://youtu.be/Q1I0ny09g5A",
+  "expected_frontend_state": {
+    "platform": "youtube",
+    "author": "TestChannel",
+    "title": "Test YouTube Video",
+    "formats": [
+      {
+        "id": "22",
+        "label": "Video 720p",
+        "type": "video/mp4",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_youtube_720"
+      },
+      {
+        "id": "18",
+        "label": "Video 360p",
+        "type": "video/mp4",
+        "sizeMb": null,
+        "downloadUrl": "/api/download?token=mock_token_youtube_360"
+      }
+    ],
+    "thumbnail": "https://i.ytimg.com/vi/Q1I0ny09g5A/maxresdefault.jpg",
+    "thumbnails": [
+      "https://i.ytimg.com/vi/Q1I0ny09g5A/maxresdefault.jpg"
+    ],
+    "duration": 245
+  }
+}

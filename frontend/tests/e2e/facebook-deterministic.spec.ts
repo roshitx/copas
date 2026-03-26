@@ -93,9 +93,9 @@ test.describe('Facebook Deterministic Scenario', () => {
 
     await submitUrl(page, outOfScopeFixture.input_url)
 
-    const errorBanner = page.locator('p.text-red-400').first()
-    await expect(errorBanner).toBeVisible()
-    await expect(errorBanner).toContainText(outOfScopeFixture.expected_error_state.message)
+    const errorCard = page.locator('[role="alert"]').first()
+    await expect(errorCard).toBeVisible()
+    await expect(errorCard).toContainText(outOfScopeFixture.expected_error_state.message)
     await expect(page.getByTestId('result-card')).not.toBeVisible()
     await expect(page.getByTestId('format-button')).toHaveCount(0)
   })

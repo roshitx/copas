@@ -1,0 +1,81 @@
+{
+  "description": "Instagram Post - multi-image carousel (3 images)",
+  "url": "https://www.instagram.com/p/DWGlvZVkyh5/",
+  "mock_ytdlp_response": {
+    "id": "DWGlvZVkyh5",
+    "title": "Travel carousel 3 photos",
+    "uploader": "travelblogger",
+    "uploader_id": "travelblogger",
+    "duration": null,
+    "thumbnail": "https://scontent.cdninstagram.com/carousel1.jpg",
+    "thumbnails": [
+      {"url": "https://scontent.cdninstagram.com/carousel1.jpg"},
+      {"url": "https://scontent.cdninstagram.com/carousel2.jpg"},
+      {"url": "https://scontent.cdninstagram.com/carousel3.jpg"}
+    ],
+    "formats": [
+      {
+        "format_id": "0",
+        "url": "https://scontent.cdninstagram.com/carousel1.jpg",
+        "ext": "jpg",
+        "vcodec": "none",
+        "acodec": "none",
+        "height": 1080,
+        "width": 1080,
+        "filesize": 480000
+      },
+      {
+        "format_id": "1",
+        "url": "https://scontent.cdninstagram.com/carousel2.jpg",
+        "ext": "jpg",
+        "vcodec": "none",
+        "acodec": "none",
+        "height": 1080,
+        "width": 1080,
+        "filesize": 510000
+      },
+      {
+        "format_id": "2",
+        "url": "https://scontent.cdninstagram.com/carousel3.jpg",
+        "ext": "jpg",
+        "vcodec": "none",
+        "acodec": "none",
+        "height": 1080,
+        "width": 1080,
+        "filesize": 495000
+      }
+    ]
+  },
+  "expected_backend_response": {
+    "platform": "instagram",
+    "title": "Travel carousel 3 photos",
+    "author": "travelblogger",
+    "duration": null,
+    "thumbnail": "https://scontent.cdninstagram.com/carousel1.jpg",
+    "thumbnails": [
+      "https://scontent.cdninstagram.com/carousel1.jpg",
+      "https://scontent.cdninstagram.com/carousel2.jpg",
+      "https://scontent.cdninstagram.com/carousel3.jpg"
+    ],
+    "formats": [
+      {
+        "id": "instagram-image-0",
+        "label": "Foto 1",
+        "type": "image/jpeg",
+        "size_mb": 0.46
+      },
+      {
+        "id": "instagram-image-1",
+        "label": "Foto 2",
+        "type": "image/jpeg",
+        "size_mb": 0.49
+      },
+      {
+        "id": "instagram-image-2",
+        "label": "Foto 3",
+        "type": "image/jpeg",
+        "size_mb": 0.47
+      }
+    ]
+  }
+}

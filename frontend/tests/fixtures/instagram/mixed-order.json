@@ -4,7 +4,7 @@
   "expected_frontend_state": {
     "platform": "instagram",
     "author": "creative_studio",
-    "title": null,
+    "title": "",
     "formats": [
       {
         "id": "img-1",
@@ -28,11 +28,11 @@
         "downloadUrl": "/api/download?token=mock_token_mixed_img3"
       }
     ],
-    "thumbnail": "https://instagram.com/media/mixed_image1.jpg",
+    "thumbnail": "https://scontent.cdninstagram.com/media/mixed_image1.jpg",
     "thumbnails": [
-      "https://instagram.com/media/mixed_image1.jpg",
-      "https://instagram.com/media/mixed_video_thumb.jpg",
-      "https://instagram.com/media/mixed_image3.jpg"
+      "https://scontent.cdninstagram.com/media/mixed_image1.jpg",
+      "https://scontent.cdninstagram.com/media/mixed_video_thumb.jpg",
+      "https://scontent.cdninstagram.com/media/mixed_image3.jpg"
     ],
     "duration": 35
   },
