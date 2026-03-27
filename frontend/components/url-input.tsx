@@ -74,12 +74,12 @@ export function UrlInput({ onSubmit, isLoading, onReset }: UrlInputProps) {
       <div 
         className={`absolute -inset-3 rounded-3xl transition-all duration-700 ease-out pointer-events-none blur-xl ${
           platform !== 'unknown' ? 'opacity-100 ' + glowClass : 'opacity-0'
-        }`} 
+        }`}
       />
       
-      <form 
-        onSubmit={handleSubmit} 
-        className="relative flex items-center h-16 rounded-2xl bg-zinc-900/80 border border-zinc-800 transition-all duration-300 focus-within:border-amber-500/60 focus-within:shadow-input-focus-amber"
+      <form
+        onSubmit={handleSubmit}
+        className="relative flex items-center h-16 rounded-2xl bg-card/80 border border-border transition-all duration-300 focus-within:border-amber-500/60 focus-within:shadow-input-focus-amber"
       >
         <input
           type="text"
@@ -93,7 +93,7 @@ export function UrlInput({ onSubmit, isLoading, onReset }: UrlInputProps) {
           }}
 
           placeholder="Tempel link video atau foto di sini..."
-          className="flex-1 h-full bg-transparent px-3 sm:px-5 text-base text-zinc-100 placeholder:text-zinc-600 outline-none"
+          className="flex-1 h-full bg-transparent px-3 sm:px-5 text-base text-foreground placeholder:text-muted-foreground outline-none"
           disabled={isLoading}
           autoComplete="off"
           autoCorrect="off"
@@ -105,7 +105,7 @@ export function UrlInput({ onSubmit, isLoading, onReset }: UrlInputProps) {
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-[120px] flex items-center justify-center w-10 h-10 text-zinc-500 hover:text-zinc-300"
+            className="absolute right-[120px] flex items-center justify-center w-10 h-10 text-muted-foreground hover:text-foreground/80"
             aria-label="Clear input"
           >
             <X size={20} />

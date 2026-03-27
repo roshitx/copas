@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { useHistoryStore } from '@/store/history-store'
@@ -30,11 +31,11 @@ export function HistoryDrawer({ open, onOpenChange, onSelect }: HistoryDrawerPro
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        className="h-[70vh] rounded-t-2xl border-t border-zinc-800 bg-zinc-950 px-0 text-zinc-100 [&>button]:hidden"
+        className="h-[70vh] rounded-t-2xl border-t border-border bg-background px-0 text-foreground [&>button]:hidden"
       >
         <SheetHeader className="px-5 pt-4">
           <div className="flex items-center justify-between">
-            <SheetTitle className="flex items-center gap-2 text-left text-lg font-semibold text-zinc-100">
+            <SheetTitle className="flex items-center gap-2 text-left text-lg font-semibold text-foreground">
               <Clock className="h-4 w-4 text-amber-500" />
               Riwayat Download
             </SheetTitle>
@@ -43,14 +44,14 @@ export function HistoryDrawer({ open, onOpenChange, onSelect }: HistoryDrawerPro
                 variant="ghost"
                 size="sm"
                 onClick={clearAll}
-                className="h-8 gap-1.5 text-xs text-zinc-400 hover:text-red-400"
+                className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-red-400"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Hapus Semua
               </Button>
             )}
           </div>
-          <SheetDescription className="text-left text-sm text-zinc-400">
+          <SheetDescription className="text-left text-sm text-muted-foreground">
             {entries.length > 0
               ? `${entries.length} item terakhir`
               : 'Belum ada riwayat download'}
@@ -60,9 +61,9 @@ export function HistoryDrawer({ open, onOpenChange, onSelect }: HistoryDrawerPro
         <div className="flex-1 overflow-y-auto px-5 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
           {entries.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Clock className="mb-3 h-10 w-10 text-zinc-700" />
-              <p className="text-sm text-zinc-500">Belum ada riwayat</p>
-              <p className="mt-1 text-xs text-zinc-600">
+              <Clock className="mb-3 h-10 w-10 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Belum ada riwayat</p>
+              <p className="mt-1 text-xs text-muted-foreground/70">
                 Download media akan muncul di sini
               </p>
             </div>
@@ -73,33 +74,36 @@ export function HistoryDrawer({ open, onOpenChange, onSelect }: HistoryDrawerPro
                   key={entry.url}
                   type="button"
                   onClick={() => onSelect(entry.url)}
-                  className="group flex w-full items-center gap-3 rounded-xl border border-zinc-800/50 bg-zinc-900/50 p-3 text-left transition-colors hover:border-zinc-700 hover:bg-zinc-800/50"
+                  className="group flex w-full items-center gap-3 rounded-xl border border-border/50 bg-card/50 p-3 text-left transition-colors hover:border-border hover:bg-secondary/50"
                 >
                   {entry.thumbnail ? (
-                    <img
+                    <Image
                       src={entry.thumbnail}
                       alt=""
+                      width={48}
+                      height={48}
                       className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                      unoptimized
                     />
                   ) : (
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-zinc-800">
-                      <PlatformIcon platform={entry.platform} size={18} className="text-zinc-500" useColor={false} />
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-secondary">
+                      <PlatformIcon platform={entry.platform} size={18} className="text-muted-foreground" useColor={false} />
                     </div>
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-zinc-200">
+                    <p className="truncate text-sm font-medium text-foreground">
                       {entry.title || 'Untitled'}
                     </p>
                     <div className="mt-0.5 flex items-center gap-2">
-                      <PlatformIcon platform={entry.platform} size={12} className="text-zinc-500" useColor={false} />
-                      <span className="text-xs text-zinc-500">
+                      <PlatformIcon platform={entry.platform} size={12} className="text-muted-foreground" useColor={false} />
+                      <span className="text-xs text-muted-foreground">
                         {formatRelativeTime(entry.timestamp)}
                       </span>
                     </div>
                   </div>
 
-                  <ExternalLink className="h-4 w-4 shrink-0 text-zinc-600 transition-colors group-hover:text-zinc-400" />
+                  <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-muted-foreground" />
                 </button>
               ))}
             </div>

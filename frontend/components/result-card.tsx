@@ -30,8 +30,8 @@ function ThumbnailGrid({ thumbnails, title }: ThumbnailGridProps) {
   const count = thumbnails.length
 
   const placeholder = (
-    <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
-      <Film className="w-10 h-10 text-zinc-700" />
+    <div className="absolute inset-0 flex items-center justify-center bg-muted">
+      <Film className="w-10 h-10 text-muted-foreground" />
     </div>
   )
 
@@ -189,9 +189,9 @@ export function ResultCard({ result, onDismiss, onFocusReturn }: ResultCardProps
             tabIndex={0}
             onKeyDown={handleKeyDown}
             style={{ x, scale, opacity }}
-            className="w-full rounded-2xl overflow-hidden border border-zinc-800/50 bg-zinc-950 animate-fade-up cursor-grab touch-pan-y active:cursor-grabbing outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            className="w-full rounded-2xl overflow-hidden border border-border/50 bg-background animate-fade-up cursor-grab touch-pan-y active:cursor-grabbing outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
           >
-          <div className="relative aspect-video bg-zinc-900">
+          <div className="relative aspect-video bg-muted">
             <ThumbnailGrid thumbnails={thumbnails} title={result.title} />
 
             <div className="absolute inset-0 vignette pointer-events-none" />
@@ -214,11 +214,11 @@ export function ResultCard({ result, onDismiss, onFocusReturn }: ResultCardProps
           </div>
 
           <div className="p-5 space-y-4">
-            <h2 className="text-base font-semibold text-zinc-100 line-clamp-2 leading-snug">
+            <h2 className="text-base font-semibold text-foreground line-clamp-2 leading-snug">
               {result.title || 'Untitled'}
             </h2>
 
-            <div className="border-t border-zinc-800/60" />
+            <div className="border-t border-border/60" />
 
             <div className="hidden md:block">
               <FormatList result={result} />

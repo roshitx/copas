@@ -107,21 +107,21 @@ export function ErrorCard({
         )}
 
         {/* Generic error message */}
-        <p className="text-sm font-medium text-zinc-300">{error}</p>
+        <p className="text-sm font-medium text-foreground/80">{error}</p>
 
         {/* Suggested actions */}
         {suggestedActions.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs font-medium text-zinc-400">
+            <p className="text-xs font-medium text-muted-foreground">
               Saran tindakan:
             </p>
             <ul className="space-y-1.5">
               {suggestedActions.map((action, index) => (
                 <li
                   key={index}
-                  className="flex items-start gap-2 text-xs text-zinc-400"
+                  className="flex items-start gap-2 text-xs text-muted-foreground"
                 >
-                  <span className="mt-0.5 h-1 w-1 rounded-full bg-zinc-400" aria-hidden="true" />
+                  <span className="mt-0.5 h-1 w-1 rounded-full bg-muted-foreground" aria-hidden="true" />
                   <span>{action}</span>
                 </li>
               ))}

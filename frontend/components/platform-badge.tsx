@@ -12,7 +12,7 @@ export function PlatformBadge({ platform, className }: PlatformBadgeProps) {
     if (platform === "unknown") return null;
     return (
         <div
-            className={`inline-flex items-center gap-1.5 rounded-full border border-zinc-700/50 bg-zinc-800/80 px-2.5 py-1 text-xs font-medium text-zinc-300 animate-in fade-in duration-200 ${className ?? ""}`}
+            className={`inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-secondary/80 px-2.5 py-1 text-xs font-medium text-foreground/80 animate-in fade-in duration-200 ${className ?? ""}`}
         >
             <PlatformIcon platform={platform} size={11} useColor={true} />
             {PLATFORM_LABELS[platform]}
