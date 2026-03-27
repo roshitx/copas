@@ -38,13 +38,13 @@ const SheetContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed bottom-0 left-0 right-0 z-50 mt-24 flex flex-col rounded-t-2xl border-t border-zinc-800 bg-zinc-950 shadow-lg data-[state=open]:animate-sheet-in data-[state=closed]:animate-sheet-out",
+        "fixed bottom-0 left-0 right-0 z-50 mt-24 flex flex-col rounded-t-2xl border-t border-border bg-background shadow-lg data-[state=open]:animate-sheet-in data-[state=closed]:animate-sheet-out",
         className
       )}
       {...props}
     >
       {/* Drag handle */}
-      <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-zinc-700" />
+      <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-border" />
       {children}
     </DialogPrimitive.Content>
   </SheetPortal>
@@ -86,7 +86,7 @@ const SheetTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold text-zinc-100",
+      "text-lg font-semibold text-foreground",
       className
     )}
     {...props}
@@ -100,7 +100,7 @@ const SheetDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-zinc-400", className)}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))

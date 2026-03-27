@@ -34,7 +34,7 @@ export function DownloadProgress({
   return (
     <div
       className={cn(
-        'w-full rounded-xl border border-zinc-800/60 bg-zinc-950/80 p-4 backdrop-blur-sm',
+        'w-full rounded-xl border border-border/60 bg-background/80 p-4 backdrop-blur-sm',
         className
       )}
       role="region"
@@ -57,14 +57,14 @@ export function DownloadProgress({
             <Download className="h-4 w-4" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-sm font-medium text-zinc-200">
+            <p className="text-sm font-medium text-foreground">
               {isComplete
                 ? 'Download selesai'
                 : isError
                   ? 'Download gagal'
                   : `Mengunduh ${fileCount} file`}
             </p>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-muted-foreground">
               {isDownloading && eta && (
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" aria-hidden="true" />
@@ -82,7 +82,7 @@ export function DownloadProgress({
         {isDownloading && (
           <button
             onClick={onCancel}
-            className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground/80 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
             aria-label="Cancel download"
             type="button"
           >
@@ -134,7 +134,7 @@ export function DownloadProgress({
         >
           {progressText}
         </span>
-        <span className="text-xs text-zinc-500">
+        <span className="text-xs text-muted-foreground">
           {Math.round((progress / 100) * fileCount)} / {fileCount}
         </span>
       </div>

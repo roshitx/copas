@@ -58,7 +58,7 @@ export function FormatList({ result }: FormatListProps) {
       </div>
 
       {showTabs && (
-        <div className="flex gap-1 mb-3 p-1 bg-zinc-900/60 rounded-lg">
+        <div className="flex gap-1 mb-3 p-1 bg-card/60 rounded-lg">
           {availableTabs.map((tab) => (
             <button
               key={tab.key}
@@ -66,8 +66,8 @@ export function FormatList({ result }: FormatListProps) {
               onClick={() => setActiveTab(tab.key)}
               className={`flex-1 px-2 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'bg-zinc-800 text-zinc-100'
-                  : 'text-zinc-500 hover:text-zinc-300'
+                  ? 'bg-secondary text-foreground'
+                  : 'text-muted-foreground hover:text-foreground/80'
               }`}
             >
               {tab.label} ({tab.count})
@@ -139,35 +139,35 @@ export function FormatList({ result }: FormatListProps) {
           ))}
         </div>
       ) : (
-        <div className="border border-zinc-800 rounded-xl overflow-hidden divide-y divide-zinc-800">
+        <div className="border border-border rounded-xl overflow-hidden divide-y divide-border">
           {videoFormats.length > 0 && (
             <details data-testid="video-section" open className="group">
-              <summary className="flex items-center gap-2 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden h-11 bg-zinc-900/40 hover:bg-zinc-800/60 transition-colors">
-                <Film className="w-4 h-4 text-zinc-400 shrink-0" />
-                <span className="text-sm font-black tracking-tighter text-zinc-100 uppercase flex-1 truncate">
+              <summary className="flex items-center gap-2 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden h-11 bg-card/40 hover:bg-secondary/60 transition-colors">
+                <Film className="w-4 h-4 text-muted-foreground shrink-0" />
+                <span className="text-sm font-black tracking-tighter text-foreground uppercase flex-1 truncate">
                   Videos
                 </span>
-                <span className="text-xs text-zinc-500 font-medium shrink-0">
+                <span className="text-xs text-muted-foreground font-medium shrink-0">
                   {isMultiVideo ? videoGroups.length + ' video' : videoFormats.length}
                 </span>
-                <ChevronDown className="w-4 h-4 text-zinc-500 transition-transform duration-200 group-open:rotate-180 shrink-0" />
+                <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-open:rotate-180 shrink-0" />
               </summary>
 
-              <div className="p-3 space-y-3 bg-zinc-950/50">
+              <div className="p-3 space-y-3 bg-background/50">
                 {isMultiVideo ? (
                   videoGroups.map((group) => (
-                    <details key={group.label} data-testid="video-group" open className="group/inner border border-zinc-800/70 rounded-lg overflow-hidden">
-                      <summary className="flex items-center gap-2 px-3 py-2.5 cursor-pointer list-none [&::-webkit-details-marker]:hidden bg-zinc-900/60 hover:bg-zinc-800/50 transition-colors">
+                    <details key={group.label} data-testid="video-group" open className="group/inner border border-border/70 rounded-lg overflow-hidden">
+                      <summary className="flex items-center gap-2 px-3 py-2.5 cursor-pointer list-none [&::-webkit-details-marker]:hidden bg-card/60 hover:bg-secondary/50 transition-colors">
                         <Film className="w-3.5 h-3.5 text-amber-500/70 shrink-0" />
-                        <span className="text-xs font-black tracking-tight text-zinc-200 uppercase flex-1 truncate">
+                        <span className="text-xs font-black tracking-tight text-foreground uppercase flex-1 truncate">
                           {group.label}
                         </span>
-                        <span className="text-[10px] text-zinc-500 font-medium shrink-0">
+                        <span className="text-[10px] text-muted-foreground font-medium shrink-0">
                           {group.formats.length} kualitas
                         </span>
-                        <ChevronDown className="w-3.5 h-3.5 text-zinc-600 transition-transform duration-200 group-open/inner:rotate-180 shrink-0" />
+                        <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/60 transition-transform duration-200 group-open/inner:rotate-180 shrink-0" />
                       </summary>
-                      <div className="p-2 space-y-1.5 bg-zinc-950/70">
+                      <div className="p-2 space-y-1.5 bg-background/70">
                         {group.formats.map((format) => (
                           <FormatButton key={format.id || group.label + '-' + format.label + '-' + format.type} format={format} result={result} disabled={isDownloadingAll} />
                         ))}
@@ -187,15 +187,15 @@ export function FormatList({ result }: FormatListProps) {
 
           {imageFormats.length > 0 && (
             <details data-testid="image-section" className="group">
-              <summary className="flex items-center gap-2 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden h-11 bg-zinc-900/40 hover:bg-zinc-800/60 transition-colors">
-                <ImageIcon className="w-4 h-4 text-zinc-400 shrink-0" />
-                <span className="text-sm font-black tracking-tighter text-zinc-100 uppercase flex-1 truncate">
+              <summary className="flex items-center gap-2 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden h-11 bg-card/40 hover:bg-secondary/60 transition-colors">
+                <ImageIcon className="w-4 h-4 text-muted-foreground shrink-0" />
+                <span className="text-sm font-black tracking-tighter text-foreground uppercase flex-1 truncate">
                   Images
                 </span>
-                <span className="text-xs text-zinc-500 font-medium shrink-0">{imageFormats.length}</span>
-                <ChevronDown className="w-4 h-4 text-zinc-500 transition-transform duration-200 group-open:rotate-180 shrink-0" />
+                <span className="text-xs text-muted-foreground font-medium shrink-0">{imageFormats.length}</span>
+                <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-open:rotate-180 shrink-0" />
               </summary>
-              <div className="p-3 space-y-2 bg-zinc-950/50">
+              <div className="p-3 space-y-2 bg-background/50">
                 {imageFormats.length > 1 && (
                   <button
                     type="button"
@@ -219,15 +219,15 @@ export function FormatList({ result }: FormatListProps) {
 
           {audioFormats.length > 0 && (
             <details data-testid="audio-section" className="group">
-              <summary className="flex items-center gap-2 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden h-11 bg-zinc-900/40 hover:bg-zinc-800/60 transition-colors">
-                <Music className="w-4 h-4 text-zinc-400 shrink-0" />
-                <span className="text-sm font-black tracking-tighter text-zinc-100 uppercase flex-1 truncate">
+              <summary className="flex items-center gap-2 px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden h-11 bg-card/40 hover:bg-secondary/60 transition-colors">
+                <Music className="w-4 h-4 text-muted-foreground shrink-0" />
+                <span className="text-sm font-black tracking-tighter text-foreground uppercase flex-1 truncate">
                   Audio
                 </span>
-                <span className="text-xs text-zinc-500 font-medium shrink-0">{audioFormats.length}</span>
-                <ChevronDown className="w-4 h-4 text-zinc-500 transition-transform duration-200 group-open:rotate-180 shrink-0" />
+                <span className="text-xs text-muted-foreground font-medium shrink-0">{audioFormats.length}</span>
+                <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-open:rotate-180 shrink-0" />
               </summary>
-              <div className="p-3 space-y-2 bg-zinc-950/50">
+              <div className="p-3 space-y-2 bg-background/50">
                 {audioFormats.map((format) => (
                   <FormatButton key={format.id || format.label + '-' + format.type} format={format} result={result} disabled={isDownloadingAll} />
                 ))}

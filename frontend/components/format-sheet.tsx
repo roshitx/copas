@@ -33,16 +33,13 @@ export function FormatSheet({ result, open, onOpenChange }: FormatSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        className="h-[85vh] rounded-t-2xl border-t border-zinc-800 bg-zinc-950 px-0 text-zinc-100 [&>button]:hidden"
+        className="h-[85vh] rounded-t-2xl border-t border-border bg-background px-0 text-foreground [&>button]:hidden"
       >
-        {/* Drag Handle */}
-        <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-zinc-700" />
-
         <SheetHeader className="px-4 pt-4">
-          <SheetTitle className="text-left text-lg font-semibold text-zinc-100">
+          <SheetTitle className="text-left text-lg font-semibold text-foreground">
             Download Formats
           </SheetTitle>
-          <p className="text-left text-sm text-zinc-400">
+          <p className="text-left text-sm text-muted-foreground">
             {result.title || 'Untitled'} • {result.platform}
           </p>
         </SheetHeader>
@@ -53,7 +50,7 @@ export function FormatSheet({ result, open, onOpenChange }: FormatSheetProps) {
             <div className="mb-6">
               <div className="mb-3 flex items-center gap-2">
                 <Film className="h-4 w-4 text-blue-400" />
-                <span className="text-sm font-medium text-zinc-300">
+                <span className="text-sm font-medium text-foreground/80">
                   Video {hasMultipleVideos && `(${videoFormats.length})`}
                 </span>
               </div>
@@ -61,7 +58,7 @@ export function FormatSheet({ result, open, onOpenChange }: FormatSheetProps) {
                 {hasMultipleVideos ? (
                   groupVideoFormats(videoFormats).map((group) => (
                     <div key={group.label}>
-                      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                         {group.label}
                       </p>
                       <div className="space-y-1">
@@ -93,7 +90,7 @@ export function FormatSheet({ result, open, onOpenChange }: FormatSheetProps) {
             <div className="mb-6">
               <div className="mb-3 flex items-center gap-2">
                 <ImageIcon className="h-4 w-4 text-green-400" aria-hidden="true" />
-                <span className="text-sm font-medium text-zinc-300">
+                <span className="text-sm font-medium text-foreground/80">
                   Image {hasMultipleImages && `(${imageFormats.length})`}
                 </span>
               </div>
@@ -114,7 +111,7 @@ export function FormatSheet({ result, open, onOpenChange }: FormatSheetProps) {
             <div className="mb-6">
               <div className="mb-3 flex items-center gap-2">
                 <Music className="h-4 w-4 text-purple-400" />
-                <span className="text-sm font-medium text-zinc-300">
+                <span className="text-sm font-medium text-foreground/80">
                   Audio {hasAudio && `(${audioFormats.length})`}
                 </span>
               </div>
@@ -133,24 +130,24 @@ export function FormatSheet({ result, open, onOpenChange }: FormatSheetProps) {
 
         {/* Download All Button - for multi-image posts */}
         {hasMultipleImages && (
-          <SheetFooter className="border-t border-zinc-800 bg-zinc-950 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+          <SheetFooter className="border-t border-border bg-background px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             {isDownloadingAll ? (
               <div className="w-full space-y-3">
-                <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300"
                     style={{ width: `${downloadProgress}%` }}
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-400">
+                  <span className="text-sm text-muted-foreground">
                     Downloading... {downloadProgress}%
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={cancelDownload}
-                    className="h-8 gap-1 text-zinc-400 hover:text-red-400"
+                    className="h-8 gap-1 text-muted-foreground hover:text-red-400"
                   >
                     <X className="h-4 w-4" />
                     Cancel
