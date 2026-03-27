@@ -1,8 +1,14 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { ErrorBoundary } from '@/components/error-boundary'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   title: "Copas.io - Social Media Content Downloader",
