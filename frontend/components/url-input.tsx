@@ -93,7 +93,7 @@ export function UrlInput({ onSubmit, isLoading, onReset }: UrlInputProps) {
           }}
 
           placeholder="Tempel link video atau foto di sini..."
-          className="flex-1 h-full bg-transparent px-5 text-sm sm:text-base text-zinc-100 placeholder:text-zinc-600 outline-none"
+          className="flex-1 h-full bg-transparent px-3 sm:px-5 text-base text-zinc-100 placeholder:text-zinc-600 outline-none"
           disabled={isLoading}
           autoComplete="off"
           autoCorrect="off"
@@ -105,7 +105,7 @@ export function UrlInput({ onSubmit, isLoading, onReset }: UrlInputProps) {
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-[120px] text-zinc-500 hover:text-zinc-300"
+            className="absolute right-[120px] flex items-center justify-center w-10 h-10 text-zinc-500 hover:text-zinc-300"
             aria-label="Clear input"
           >
             <X size={20} />
@@ -116,7 +116,7 @@ export function UrlInput({ onSubmit, isLoading, onReset }: UrlInputProps) {
           <button
             type="submit"
             disabled={isLoading || !normalizedUrl}
-            className="h-11 px-6 rounded-xl bg-[#F59E0B] text-zinc-950 font-semibold text-sm hover:bg-amber-400 active:scale-95 transition-all duration-150 shadow-amber-glow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px]"
+            className="h-11 px-4 sm:px-6 rounded-xl bg-[#F59E0B] text-zinc-950 font-semibold text-sm hover:bg-amber-400 active:scale-95 transition-all duration-150 shadow-amber-glow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px] sm:min-w-[100px]"
           >
             {isLoading ? (
               <>

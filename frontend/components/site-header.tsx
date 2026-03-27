@@ -45,7 +45,7 @@ export function SiteHeader({ onHistorySelect }: SiteHeaderProps) {
                     <div className="flex items-center gap-2">
                         {/* Pill nav */}
                         <nav
-                            className="flex items-center rounded-full bg-muted/60 p-1 gap-0.5"
+                            className="hidden sm:flex items-center rounded-full bg-muted/60 p-1 gap-0.5"
                             aria-label="Navigasi utama"
                         >
                             {NAV_LINKS.map(({ href, label }) => {
@@ -67,7 +67,7 @@ export function SiteHeader({ onHistorySelect }: SiteHeaderProps) {
                         </nav>
 
                         {/* Separator */}
-                        <div className="h-5 w-px bg-border mx-1" aria-hidden />
+                        <div className="hidden sm:block h-5 w-px bg-border mx-1" aria-hidden />
 
                         {/* Action buttons */}
                         <Button
