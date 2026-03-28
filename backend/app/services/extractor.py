@@ -16,7 +16,7 @@ from app.services.extractors.facebook import (
     _extract_info_sync_facebook,
     _build_media_result as _build_facebook_media_result,
 )
-from app.services.extractors.instagram import _extract_photos as _extract_instagram_photos
+from app.services.extractors.instagram import extract_instagram_media as _extract_instagram_media
 from app.services.facebook_fallback import extract_facebook_via_fallback
 from app.utils.facebook_scope import classify_extraction_error
 import app.services.token_store as _token_store_module
@@ -30,7 +30,7 @@ __all__ = [
     "_extract_facebook_hybrid",
     "_extract_info_sync_facebook",
     "_build_facebook_media_result",
-    "_extract_instagram_photos",
+    "_extract_instagram_media",
     "extract_facebook_via_fallback",
     "classify_extraction_error",
     "_token_store_module",
