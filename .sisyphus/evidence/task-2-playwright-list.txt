@@ -1,4 +1,0 @@
-Listing tests:
-  [chromium] › setup.spec.ts:3:5 › setup verification
-Total: 1 test in 1 file
-Exit code: 0

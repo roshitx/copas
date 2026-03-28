@@ -31,7 +31,12 @@ __pycache__/
 .mypy_cache/
 
 # Local tool state
+.claude/
 .sisyphus/
 .opencode/
 .playwright/
 .vercel
+
+# Project briefs & reports
+brief/
+.reports/
