@@ -103,7 +103,7 @@ export async function assertFormatListVisible(page: Page): Promise<void> {
  * Assert that the accordion container is visible (accordion mode).
  */
 export async function assertAccordionContainerVisible(page: Page): Promise<void> {
-  const accordionContainer = page.locator('.divide-y.divide-zinc-800').first()
+  const accordionContainer = page.locator('.divide-y.divide-border').first()
   await expect(accordionContainer).toBeVisible()
 }
 
