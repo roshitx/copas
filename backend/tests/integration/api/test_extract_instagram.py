@@ -324,8 +324,8 @@ class TestInstagramErrorHandling:
 
             assert response.status_code == 403
             data = response.json()
-            assert data["detail"]["error"] == "ACCESS_DENIED"
-            assert "message" in data["detail"]
+            assert data["error"] == "ACCESS_DENIED"
+            assert "message" in data
 
     async def test_extraction_failure_returns_422(self, client, mock_token_store):
         """Test RuntimeError -> 422 EXTRACTION_FAILED."""
@@ -340,8 +340,8 @@ class TestInstagramErrorHandling:
 
             assert response.status_code == 422
             data = response.json()
-            assert data["detail"]["error"] == "EXTRACTION_FAILED"
-            assert "message" in data["detail"]
+            assert data["error"] == "EXTRACTION_FAILED"
+            assert "message" in data
 
 
 class TestInstagramPlatformDetection:

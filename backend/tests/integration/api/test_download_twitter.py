@@ -31,22 +31,22 @@ class TestDownloadTokenValidation:
         response = client.get(f"/api/download?token={expired_token}")
 
         assert response.status_code == 410
-        error_detail = response.json()["detail"].lower()
+        error_detail = response.json()["message"].lower()
         assert (
-            "expired" in error_detail
-            or "invalid" in error_detail
-            or "not found" in error_detail
+            "kadaluarsa" in error_detail
+            or "tidak valid" in error_detail
+            or "tidak ada" in error_detail
         )
 
     async def test_invalid_token_returns_410(self, client):
         response = client.get("/api/download?token=invalid-token-12345")
 
         assert response.status_code == 410
-        error_detail = response.json()["detail"].lower()
+        error_detail = response.json()["message"].lower()
         assert (
-            "expired" in error_detail
-            or "invalid" in error_detail
-            or "not found" in error_detail
+            "kadaluarsa" in error_detail
+            or "tidak valid" in error_detail
+            or "tidak ada" in error_detail
         )
 
     async def test_missing_token_query_param(self, client):

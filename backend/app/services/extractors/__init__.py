@@ -1,13 +1,13 @@
 """Platform-specific media extractors with unified entry point."""
 
-from app.schemas.extract import MediaResult
-from app.services.cache import extraction_cache
-from app.services.tiktok_extractor import extract_tiktok_media
-from app.utils.platform import detect_platform
-from .twitter import extract_twitter_media
-from .instagram import extract_instagram_media
+from ...schemas.extract import MediaResult
+from ...utils.platform import detect_platform
+from ..cache import extraction_cache
+from ..tiktok_extractor import extract_tiktok_media
+from .constants import ERR_THREADS_NOT_SUPPORTED, ERR_UNSUPPORTED_PLATFORM
 from .facebook import extract_facebook_media
-from .constants import ERR_UNSUPPORTED_PLATFORM, ERR_THREADS_NOT_SUPPORTED
+from .instagram import extract_instagram_media
+from .twitter import extract_twitter_media
 
 
 async def extract_media_info(url: str) -> MediaResult:
@@ -35,4 +35,5 @@ async def extract_media_info(url: str) -> MediaResult:
 
     # Generic extraction (YouTube, etc.) via yt-dlp
     from .youtube import extract_youtube_media
+
     return await extract_youtube_media(url, platform)

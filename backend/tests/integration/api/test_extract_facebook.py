@@ -198,8 +198,7 @@ class TestExtractFacebookHybridMatrix:
 
             assert response.status_code == 422
             data = cast(dict[str, object], response.json())
-            detail = cast(dict[str, object], data["detail"])
-            assert cast(str, detail["error"]) == "EXTRACTION_FAILED"
+            assert cast(str, data["error"]) == "EXTRACTION_FAILED"
 
 
 
@@ -219,8 +218,7 @@ class TestExtractFacebookHybridMatrix:
 
             assert response.status_code == 403
             data = cast(dict[str, object], response.json())
-            detail = cast(dict[str, object], data["detail"])
-            assert cast(str, detail["error"]) == "ACCESS_DENIED"
+            assert cast(str, data["error"]) == "ACCESS_DENIED"
 
     async def test_error_code_no_fallback_immediate_failure_without_fallback_attempt(
         self, client: TestClient
@@ -242,6 +240,5 @@ class TestExtractFacebookHybridMatrix:
 
             assert response.status_code == 400
             data = cast(dict[str, object], response.json())
-            detail = cast(dict[str, object], data["detail"])
-            assert cast(str, detail["error"]) == "UNSUPPORTED_PLATFORM"
+            assert cast(str, data["error"]) == "UNSUPPORTED_PLATFORM"
             mock_fallback.assert_not_called()
