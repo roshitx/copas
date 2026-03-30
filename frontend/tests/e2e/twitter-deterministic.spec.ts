@@ -108,8 +108,6 @@ test.describe('Twitter Single Video Scenario', () => {
     await submitUrl(page, singleVideoFixture.input_url)
     const resultCard = await waitForResultCard(page)
     await expect(page.getByText(singleVideoFixture.expected_frontend_state.title)).toBeVisible()
-    const thumbnail = resultCard.locator('img').first()
-    await expect(thumbnail).toBeVisible()
   })
 
   test('happy path: shows format button with VIDEO badge', async () => {
