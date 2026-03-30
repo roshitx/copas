@@ -1,10 +1,21 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from app.schemas.extract import ExtractRequest, MediaResult
-from app.services.extractors import extract_media_info
-from app.services.tiktok_extractor import TikWMError, TikWMUnavailableError, TikWMContentError
+from ..core.error_codes import ErrorCode
+from ..core.exceptions import (
+    AccessDeniedException,
+    CopasException,
+    ExtractionFailedException,
+    ServiceUnavailableException,
+    UnsupportedPlatformException,
+)
+from ..schemas.extract import ExtractRequest, MediaResult
+from ..services.extractors import extract_media_info
+from ..services.tiktok_extractor import (
+    TikWMContentError,
+    TikWMUnavailableError,
+)
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
@@ -17,38 +28,32 @@ async def extract_endpoint(request: Request, body: ExtractRequest) -> MediaResul
     Extract media information from a URL.
 
     Rate limited to 10 requests per minute per IP.
+
+    Raises:
+        UnsupportedPlatformException: If the platform is not supported.
+        AccessDeniedException: If access to content is denied.
+        ExtractionFailedException: If media extraction fails.
+        ServiceUnavailableException: If external service is unavailable.
+        CopasException: For other internal errors.
     """
     try:
         result = await extract_media_info(body.url)
         return result
     except ValueError as e:
-        raise HTTPException(status_code=400, detail={
-            "error": "UNSUPPORTED_PLATFORM",
-            "message": str(e),
-        })
+        raise UnsupportedPlatformException(message=str(e))
     except PermissionError as e:
-        raise HTTPException(status_code=403, detail={
-            "error": "ACCESS_DENIED",
-            "message": str(e),
-        })
+        raise AccessDeniedException(message=str(e))
     except RuntimeError as e:
-        raise HTTPException(status_code=422, detail={
-            "error": "EXTRACTION_FAILED",
-            "message": str(e),
-        })
+        raise ExtractionFailedException(message=str(e))
     except TikWMUnavailableError as e:
-        raise HTTPException(status_code=503, detail={
-            "error": "SERVICE_UNAVAILABLE",
-            "message": str(e),
-        })
+        raise ServiceUnavailableException(message=str(e), service="TikWM")
     except TikWMContentError as e:
-        raise HTTPException(status_code=422, detail={
-            "error": "EXTRACTION_FAILED",
-            "message": str(e),
-        })
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail={
-            "error": "INTERNAL_ERROR",
-            "message": "Terjadi kesalahan internal. Coba lagi nanti.",
-        })
+        raise ExtractionFailedException(message=str(e))
+    except CopasException:
+        # Re-raise custom exceptions as-is (already handled)
+        raise
+    except Exception:
+        raise CopasException(
+            error_code=ErrorCode.INTERNAL_ERROR,
+            message="Terjadi kesalahan internal. Coba lagi nanti.",
+        )

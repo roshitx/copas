@@ -79,15 +79,15 @@ class TestDownloadContractFailure:
 
         assert response.status_code == 410
         json_response = response.json()
-        assert "detail" in json_response
-        assert isinstance(json_response["detail"], str)
+        assert "error" in json_response
+        assert isinstance(json_response["message"], str)
 
     async def test_invalid_token_returns_410_schema(self, client):
         response = client.get("/api/download?token=nonexistent-token-xyz")
 
         assert response.status_code == 410
         json_response = response.json()
-        assert "detail" in json_response
+        assert "error" in json_response
 
     async def test_missing_token_returns_422_validation_error(self, client):
         response = client.get("/api/download")

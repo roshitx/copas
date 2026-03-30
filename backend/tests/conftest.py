@@ -2,6 +2,7 @@ import pytest
 import respx
 from fastapi.testclient import TestClient
 from httpx import Response
+from unittest.mock import patch
 
 from app.main import app
 from app.services.token_store import TokenStore, TokenData
@@ -35,6 +36,15 @@ def mock_token_store(monkeypatch):
         "app.services.facebook_fallback._token_store_module.token_store", fresh_store
     )
     return fresh_store
+
+
+@pytest.fixture(autouse=True)
+def reset_http_client_singleton():
+    """Reset singleton httpx client before each test so respx.mock can intercept it."""
+    import app.services.http_client as _http_client_module
+    _http_client_module._client = None
+    yield
+    _http_client_module._client = None
 
 
 @pytest.fixture(autouse=True)
@@ -74,7 +84,8 @@ def mock_upstream_media(mock_media_bytes):
         return route
 
     with respx.mock:
-        yield _setup_mock
+        with patch("app.services.streamer.validate_public_url", side_effect=lambda url: url):
+            yield _setup_mock
 
 
 @pytest.fixture

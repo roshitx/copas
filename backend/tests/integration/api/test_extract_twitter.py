@@ -15,7 +15,7 @@ import json
 import pytest
 import respx
 from httpx import Response
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
@@ -160,7 +160,7 @@ class TestExtractTwitterSingleImage:
         expected = fixture["expected_backend_response"]
 
         # Mock yt-dlp to raise "no video could be found" for image-only tweets
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             # Mock fxtwitter API
@@ -205,7 +205,7 @@ class TestExtractTwitterSingleImage:
         """Test that download URLs are properly tokenized."""
         fixture = SINGLE_IMAGE_FIXTURE
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             fx_response = create_fxtwitter_response(fixture)
@@ -238,16 +238,14 @@ class TestExtractTwitterSingleVideo:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
-            # Mock fxtwitter (may return no photos for video tweets)
-            with respx.mock:
-                respx.route(
-                    method="GET",
-                    url__regex=r"https://api\.fxtwitter\.com/status/\d+",
-                ).mock(return_value=Response(200, json={"tweet": {"media": {}}}))
-
+            with patch(
+                "app.services.extractors.twitter._fetch_fxtwitter",
+                new_callable=AsyncMock,
+                return_value={"tweet": {"media": {}}},
+            ):
                 response = client.post(
                     "/api/extract", json={"url": fixture["input_url"]}
                 )
@@ -275,15 +273,14 @@ class TestExtractTwitterSingleVideo:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
-            with respx.mock:
-                respx.route(
-                    method="GET",
-                    url__regex=r"https://api\.fxtwitter\.com/status/\d+",
-                ).mock(return_value=Response(200, json={"tweet": {"media": {}}}))
-
+            with patch(
+                "app.services.extractors.twitter._fetch_fxtwitter",
+                new_callable=AsyncMock,
+                return_value={"tweet": {"media": {}}},
+            ):
                 response = client.post(
                     "/api/extract", json={"url": fixture["input_url"]}
                 )
@@ -302,15 +299,14 @@ class TestExtractTwitterMultiVideo:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=True)
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
-            with respx.mock:
-                respx.route(
-                    method="GET",
-                    url__regex=r"https://api\.fxtwitter\.com/status/\d+",
-                ).mock(return_value=Response(200, json={"tweet": {"media": {}}}))
-
+            with patch(
+                "app.services.extractors.twitter._fetch_fxtwitter",
+                new_callable=AsyncMock,
+                return_value={"tweet": {"media": {}}},
+            ):
                 response = client.post(
                     "/api/extract", json={"url": fixture["input_url"]}
                 )
@@ -333,7 +329,7 @@ class TestExtractTwitterMultiVideo:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=True)
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             with respx.mock:
@@ -358,16 +354,15 @@ class TestExtractTwitterMultiImage:
         fixture = MULTI_IMAGE_FIXTURE
         expected = fixture["expected_backend_response"]
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             fx_response = create_fxtwitter_response(fixture)
-            with respx.mock:
-                respx.route(
-                    method="GET",
-                    url__regex=r"https://api\.fxtwitter\.com/status/\d+",
-                ).mock(return_value=Response(200, json=fx_response))
-
+            with patch(
+                "app.services.extractors.twitter._fetch_fxtwitter",
+                new_callable=AsyncMock,
+                return_value=fx_response,
+            ):
                 response = client.post(
                     "/api/extract", json={"url": fixture["input_url"]}
                 )
@@ -390,16 +385,15 @@ class TestExtractTwitterMultiImage:
         """Test that all images have tokenized download URLs."""
         fixture = MULTI_IMAGE_FIXTURE
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             fx_response = create_fxtwitter_response(fixture)
-            with respx.mock:
-                respx.route(
-                    method="GET",
-                    url__regex=r"https://api\.fxtwitter\.com/status/\d+",
-                ).mock(return_value=Response(200, json=fx_response))
-
+            with patch(
+                "app.services.extractors.twitter._fetch_fxtwitter",
+                new_callable=AsyncMock,
+                return_value=fx_response,
+            ):
                 response = client.post(
                     "/api/extract", json={"url": fixture["input_url"]}
                 )
@@ -423,7 +417,7 @@ class TestExtractTwitterHybrid:
         # Create mock info with video
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             # Mock fxtwitter to return the image
@@ -458,16 +452,15 @@ class TestExtractTwitterHybrid:
         expected = fixture["expected_backend_response"]
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             fx_response = create_fxtwitter_response(fixture)
-            with respx.mock:
-                respx.route(
-                    method="GET",
-                    url__regex=r"https://api\.fxtwitter\.com/status/\d+",
-                ).mock(return_value=Response(200, json=fx_response))
-
+            with patch(
+                "app.services.extractors.twitter._fetch_fxtwitter",
+                new_callable=AsyncMock,
+                return_value=fx_response,
+            ):
                 response = client.post(
                     "/api/extract", json={"url": fixture["input_url"]}
                 )
@@ -492,8 +485,8 @@ class TestExtractErrorMapping:
 
             assert response.status_code == 400
             data = response.json()
-            assert data["detail"]["error"] == "UNSUPPORTED_PLATFORM"
-            assert "message" in data["detail"]
+            assert data["error"] == "UNSUPPORTED_PLATFORM"
+            assert "message" in data
 
     async def test_private_content_returns_403(self, client):
         """Test PermissionError → 403 ACCESS_DENIED."""
@@ -508,8 +501,8 @@ class TestExtractErrorMapping:
 
             assert response.status_code == 403
             data = response.json()
-            assert data["detail"]["error"] == "ACCESS_DENIED"
-            assert "message" in data["detail"]
+            assert data["error"] == "ACCESS_DENIED"
+            assert "message" in data
 
     async def test_extraction_failure_returns_422(self, client):
         """Test RuntimeError → 422 EXTRACTION_FAILED."""
@@ -522,8 +515,8 @@ class TestExtractErrorMapping:
 
             assert response.status_code == 422
             data = response.json()
-            assert data["detail"]["error"] == "EXTRACTION_FAILED"
-            assert "message" in data["detail"]
+            assert data["error"] == "EXTRACTION_FAILED"
+            assert "message" in data
 
     async def test_internal_error_returns_500(self, client):
         """Test unexpected Exception → 500 INTERNAL_ERROR."""
@@ -536,11 +529,11 @@ class TestExtractErrorMapping:
 
             assert response.status_code == 500
             data = response.json()
-            assert data["detail"]["error"] == "INTERNAL_ERROR"
-            assert "message" in data["detail"]
+            assert data["error"] == "INTERNAL_ERROR"
+            assert "message" in data
             data = response.json()
-            assert data["detail"]["error"] == "INTERNAL_ERROR"
-            assert "message" in data["detail"]
+            assert data["error"] == "INTERNAL_ERROR"
+            assert "message" in data
 
 
 class TestExtractResponseStructure:
@@ -551,7 +544,7 @@ class TestExtractResponseStructure:
         fixture = SINGLE_VIDEO_FIXTURE
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             with respx.mock:
@@ -579,7 +572,7 @@ class TestExtractResponseStructure:
         fixture = SINGLE_VIDEO_FIXTURE
         mock_info = create_mock_ytdlp_info(fixture, is_playlist=False)
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.return_value = mock_info
 
             with respx.mock:
@@ -605,7 +598,7 @@ class TestExtractResponseStructure:
         """Test that Twitter URLs are correctly detected."""
         fixture = SINGLE_IMAGE_FIXTURE
 
-        with patch("app.services.extractors.base.extract_info_sync") as mock_ytdlp:
+        with patch("app.services.extractors.twitter.extract_info_sync") as mock_ytdlp:
             mock_ytdlp.side_effect = RuntimeError("no video could be found")
 
             fx_response = create_fxtwitter_response(fixture)
